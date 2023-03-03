@@ -3,6 +3,7 @@ import Login from '../pages/Login'
 import Detail from '../pages/Detail'
 import Mainpage from '../pages/Mainpage'
 import Signup from '../pages/Signup'
+import Write from '../pages/Write'
 
 const Router = () => {
 
@@ -13,6 +14,7 @@ const Router = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/detail" element={<Detail />} />
+          <Route path="/write" element={<Write />} />
       </Routes>
     </BrowserRouter>
     )
