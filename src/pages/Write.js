@@ -11,7 +11,7 @@ function Write() {
   const [description, setDescription] = useState('')
   const [companytype, setCompanyType] = useState('')
   const [startdate, setStartDate] = useState('')
-  const [enddate, setEnddate] = useState('')
+  const [enddate, setEnddate] = useState(null)
   const [recruitmentperiod, setRecruitmentperiod] = useState(false)
   const [job, setJob] = useState([])
 
@@ -127,6 +127,7 @@ function Write() {
       return
     }
   }
+  console.log("enddate",enddate)
 
   return (
     <StDivWrap>
