@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import styled from 'styled-components'
 import { addRecruit } from '../api/detailapi'
@@ -10,30 +10,62 @@ function Write() {
   const [startdate, setStartDate] = useState('')
   const [enddate, setEnddate] = useState('')
   const [recruittentperiod, setRecruittentperiod] = useState(false)
-  const [incruittype, setIncruittype] = useState('')
+
+  // 이미지 upload useState
   const [img, setImg] = useState(null)
   const [logo, setLogo] = useState(null)
+
+  // 이미지 미리보기 upload useState
+  const [viewLogo, setViewLogo] = useState('')
+  const [viewImg, setViewImg] = useState('')
+
+  const logoFileInputRef = useRef()
+
+  const [incruittype, setIncruittype] = useState('')
   const [jobdetail, setJobdetail] = useState('')
 
-  
   const [incruittype2, setIncruittype2] = useState('')
   const [jobdetail2, setJobdetail2] = useState('')
 
-  const queryClient = useQueryClient();
+  // logo onChange 핸들러
+  const logoImgInputHandler = (e) => {
+    setLogo(e.target.files[0])
+    const file = logoFileInputRef.current.files[0]
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onloadend = () => {
+      setViewLogo(reader.result)
+    }
+  }
+
+  const queryClient = useQueryClient()
   const addMutation = useMutation(addRecruit, {
     onSuccess: () => {
-        queryClient.invalidateQueries('recruits')
-    }
+      queryClient.invalidateQueries('recruits')
+    },
   })
 
   const addButton = () => {
-    const formData = new FormData();
-    for(let i of [logo, img, title, description, companytype, startdate, enddate, recruittentperiod]) {
-        formData.append(`${i}`, i)
+    const formData = new FormData()
+
+    for (let i of [
+      title,
+      description,
+      companytype,
+      startdate,
+      enddate,
+      recruittentperiod,
+    ]) {
+      formData.append(
+        `${i}`,
+        new Blob([JSON.stringify(i)], {
+          type: 'application/json',
+        })
+      )
     }
 
-    // formData.append('logo', logo);
-    // formData.append('img', img);
+    formData.append('logo', logo)
+    formData.append('img', img)
     // formData.append('title', title);
     // formData.append('description', description)
     // formData.append('companytype', companytype)
@@ -46,7 +78,7 @@ function Write() {
     // }
     // formData.append('incruittype', incruittype)
     // formData.append('jobdetail', jobdetail)
-    console.log(formData.get(img))
+    // console.log(formData.get(img))
 
     // addMutation.mutate(formData)
   }
@@ -55,11 +87,19 @@ function Write() {
     <StDivWrap>
       <StDivContainer>
         <StDivLogoimg>
-          <input name="logo" id="logo" type="file" onChange={(e) => setLogo(e.target.files[0])} />
+          <StLabelLogo htmlFor="logo">회사 로고 이미지 업로드</StLabelLogo>
+          <StImgLogo src={viewLogo ? viewLogo : null} />
+          <StInputLogo
+            name="logo"
+            id="logo"
+            type="file"
+            ref={logoFileInputRef}
+            onChange={logoImgInputHandler}
+          />
         </StDivLogoimg>
         <StDivInfo>
           <div>
-            <input
+            <StInputTitle
               type="text"
               placeholder="기업 명을 작성해주세요"
               onChange={(e) => setTitle(e.target.value)}
@@ -133,13 +173,19 @@ function Write() {
         />
       </div>
       <div>
-        <input name="img" id="img" type="file" onChange={(e) => setImg(e.target.files[0])}/>
-        <textarea 
-            type="text"
-            name="description"
-            placeholder="내용을 작성해주세요"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+        <input
+          hidden
+          name="img"
+          id="img"
+          type="file"
+          onChange={(e) => setImg(e.target.files[0])}
+        />
+        <textarea
+          type="text"
+          name="description"
+          placeholder="내용을 작성해주세요"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </div>
       <button onClick={addButton}>작성</button>
@@ -157,7 +203,7 @@ const StDivWrap = styled.div`
   margin: 20px auto;
   position: relative;
   display: block;
-  font-family: "NotoSans";
+  font-family: 'NotoSans';
   font-weight: 900;
 `
 const StDivContainer = styled.div`
@@ -175,10 +221,39 @@ const StDivLogoimg = styled.div`
   width: 90px;
   height: 140px;
   margin-right: 30px;
-  border: 1px solid red;
   float: left;
+`
+const StLabelLogo = styled.label`
+  width: 103px;
+  height: 35px;
+  margin-right: 30px;
+  float: left;
+  border: none;
+  font-size: 12px;
+  text-align: center;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.1);
+  top: 170px;
 `
 const StDivInfo = styled.div`
   position: relative;
   float: left;
+`
+const StInputLogo = styled.input`
+  display: none;
+`
+const StImgLogo = styled.img`
+  width: 102px;
+  height: 142px;
+  position: absolute;
+  left: 25px;
+`
+const StInputTitle = styled.input`
+  width: 250px;
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  :focus {
+    outline: 1px solid rgba(0, 0, 0, 0.3);
+  }
 `
