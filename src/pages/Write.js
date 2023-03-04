@@ -10,6 +10,7 @@ function Write() {
   const [startdate, setStartDate] = useState('')
   const [enddate, setEnddate] = useState('')
   const [recruittentperiod, setRecruittentperiod] = useState(false)
+  const [job, setJob] = useState([])
 
   // 이미지 upload useState
   const [img, setImg] = useState(null)
@@ -24,8 +25,18 @@ function Write() {
   const [incruittype, setIncruittype] = useState('')
   const [jobdetail, setJobdetail] = useState('')
 
-  const [incruittype2, setIncruittype2] = useState('')
-  const [jobdetail2, setJobdetail2] = useState('')
+  // const [incruittype2, setIncruittype2] = useState('')
+  // const [jobdetail2, setJobdetail2] = useState('')
+
+  const addJobHandler = () => {
+    const newJob = {
+      incruittype,
+      jobdetail,
+    }
+
+    setJobdetail('')
+    setJob([...job, newJob])
+  }
 
   // logo onChange 핸들러
   const logoImgInputHandler = (e) => {
@@ -44,9 +55,17 @@ function Write() {
       queryClient.invalidateQueries('recruits')
     },
   })
+  console.log(job)
 
   const addButton = () => {
     const formData = new FormData()
+    // const job = []
+    // {
+    //   incruittype,
+    //   jobdetail,
+    //   incruittype2,
+    //   jobdetail2,
+    // }
 
     for (let i of [
       title,
@@ -55,6 +74,7 @@ function Write() {
       startdate,
       enddate,
       recruittentperiod,
+      job,
     ]) {
       formData.append(
         `${i}`,
@@ -108,7 +128,7 @@ function Write() {
           </div>
           <div>
             <p>
-              채용기간 시작 날짜
+              <StSpanDate>채용기간 시작 날짜</StSpanDate>
               <input
                 type="date"
                 id="startDate"
@@ -117,7 +137,7 @@ function Write() {
             </p>
 
             <p>
-              채용기간 마감 날짜
+              <StSpanDate>채용기간 마감 날짜</StSpanDate>
               <input
                 type="date"
                 id="endDate"
@@ -126,9 +146,19 @@ function Write() {
             </p>
           </div>
           <div>
-            <div onClick={() => setRecruittentperiod(!recruittentperiod)}>
-              상시 모집 버튼
-            </div>
+            {recruittentperiod === false ? (
+              <StDivRecruitTentperiodFalse
+                onClick={() => setRecruittentperiod(!recruittentperiod)}
+              >
+                상시 모집 버튼
+              </StDivRecruitTentperiodFalse>
+            ) : (
+              <StDivRecruitTentperiodTrue
+                onClick={() => setRecruittentperiod(!recruittentperiod)}
+              >
+                상시 모집 버튼
+              </StDivRecruitTentperiodTrue>
+            )}
 
             <select onChange={(e) => setCompanyType(e.target.value)}>
               <option>기업의 형태를 지정해주세요</option>
@@ -155,26 +185,22 @@ function Write() {
           value={jobdetail}
           onChange={(e) => setJobdetail(e.target.value)}
         />
+        <button onClick={addJobHandler}>추가하기</button>
       </div>
       <div>
-        <select onChange={(e) => setIncruittype2(e.target.value)}>
-          <option>채용 형태를 지정해주세요</option>
-          <option>신입</option>
-          <option>경력</option>
-          <option>인턴</option>
-          <option>계약직</option>
-        </select>
-        <input
-          type="text"
-          name="jobdetail"
-          placeholder="담당할 업무를 작성해주세요"
-          value={jobdetail2}
-          onChange={(e) => setJobdetail2(e.target.value)}
-        />
+        {job.map((job, i) => {
+          return (
+            <div key={`${job}_${i}`}>
+              {/* id값이 아닌 다른걸 사용 */}
+              <p>
+                {job.incruittype} {job.jobdetail}
+              </p>
+            </div>
+          )
+        })}
       </div>
       <div>
         <input
-          hidden
           name="img"
           id="img"
           type="file"
@@ -211,6 +237,7 @@ const StDivContainer = styled.div`
   float: right;
   background: #fff;
   width: 680px;
+  height: 170px;
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 25px;
@@ -256,4 +283,31 @@ const StInputTitle = styled.input`
   :focus {
     outline: 1px solid rgba(0, 0, 0, 0.3);
   }
+`
+const StSpanDate = styled.span`
+  margin-right: 30px;
+`
+const StDivRecruitTentperiodFalse = styled.div`
+  position: absolute;
+  width: 120px;
+  padding: 5px;
+  text-align: center;
+  left: 350px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  background-color: white;
+  color: black;
+  border-radius: 10px;
+  cursor: pointer;
+`
+const StDivRecruitTentperiodTrue = styled.div`
+  position: absolute;
+  width: 120px;
+  padding: 5px;
+  text-align: center;
+  left: 350px;
+  border: none;
+  background-color: black;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
 `
