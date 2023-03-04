@@ -22,7 +22,6 @@ function Write() {
   // 이미지 미리보기 upload useState
   const [viewLogo, setViewLogo] = useState('')
   const [viewImg, setViewImg] = useState('')
-
   const logoFileInputRef = useRef()
   const imgFileInputRef = useRef()
 
@@ -30,13 +29,21 @@ function Write() {
   const [jobdetail, setJobdetail] = useState('')
 
   const addJobHandler = () => {
-    const newJob = {
-      incruittype,
-      jobdetail,
-    }
+    if (incruittype !== '' && jobdetail !== '') {
+      if (window.confirm('고용 내용을 추가하시겠습니까?') === true) {
+        const newJob = {
+          incruittype,
+          jobdetail,
+        }
 
-    setJobdetail('')
-    setJob([...job, newJob])
+        setJobdetail('')
+        setJob([...job, newJob])
+      } else {
+        return
+      }
+    } else {
+      alert('채용 형태와 담당할 업무를 모두 작성해주세요')
+    }
   }
 
   // logo onChange 핸들러
@@ -86,13 +93,16 @@ function Write() {
         })
       )
     }
-
+    addMutation.mutate(formData)
     formData.append('logo', logo)
     formData.append('img', img)
   }
   // 취소 버튼 클릭시
   const cancelButton = () => {
-    if (window.confirm('작성을 취소하시겠습니까? 메인 화면으로 돌아갑니다') === true) {
+    if (
+      window.confirm('작성을 취소하시겠습니까? 메인 화면으로 돌아갑니다') ===
+      true
+    ) {
       navigate('/')
     } else {
       return
