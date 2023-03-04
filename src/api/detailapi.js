@@ -9,10 +9,10 @@ import axios from 'axios'
 // 채용 공고 추가
 export const addRecruit = async (formData) => {
   await axios.post(`${process.env.REACT_APP_SERVER}/api/recruit`, formData, {
-    withCredentials: true
-    // headers: {
+    withCredentials: true,
+    headers: {
     //       Authorization: `Bearer ${getCookie('userToken')}`,
-    //       'Content-Type': 'multipart/form-data',
-    // },
+          'Content-Type': 'multipart/form-data',
+    },
   })
 }

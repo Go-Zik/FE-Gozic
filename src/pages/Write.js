@@ -12,11 +12,11 @@ function Write() {
   const [companytype, setCompanyType] = useState('')
   const [startdate, setStartDate] = useState('')
   const [enddate, setEnddate] = useState('')
-  const [recruittentperiod, setRecruittentperiod] = useState(false)
+  const [recruitmentperiod, setRecruitmentperiod] = useState(false)
   const [job, setJob] = useState([])
 
   // 이미지 upload useState
-  const [img, setImg] = useState(null)
+  const [image, setImg] = useState(null)
   const [logo, setLogo] = useState(null)
 
   // 이미지 미리보기 upload useState
@@ -77,25 +77,44 @@ function Write() {
   const addButton = () => {
     const formData = new FormData()
 
-    for (let i of [
+    const newData = {
       title,
       description,
       companytype,
       startdate,
       enddate,
-      recruittentperiod,
+      recruitmentperiod,
       job,
-    ]) {
-      formData.append(
-        `${i}`,
-        new Blob([JSON.stringify(i)], {
-          type: 'application/json',
-        })
-      )
     }
-    addMutation.mutate(formData)
+
+    // for (let i of [
+    //   title,
+    //   description,
+    //   companytype,
+    //   startdate,
+    //   enddate,
+    //   recruitmentperiod,
+    //   job,
+    // ]) {
+    //   formData.append(
+    //     `${i}`,
+    //     i
+        // new Blob([JSON.stringify(i)], {
+        //   type: 'application/json',
+        // })
+    //   )
+    // }
+    // formData.append('job', new Blob([JSON.stringify(job)], {
+    //   type: 'application/json'
+    // }))
+    const json = JSON.stringify(newData)
+    const blob = new Blob([json], {type: 'application/json'})
+    formData.append('data', blob)
+
     formData.append('logo', logo)
-    formData.append('img', img)
+    formData.append('image', image)
+
+    addMutation.mutate(formData)
   }
   // 취소 버튼 클릭시
   const cancelButton = () => {
@@ -152,15 +171,15 @@ function Write() {
             </p>
           </div>
           <div>
-            {recruittentperiod === false ? (
+            {recruitmentperiod === false ? (
               <StDivRecruitTentperiodFalse
-                onClick={() => setRecruittentperiod(!recruittentperiod)}
+                onClick={() => setRecruitmentperiod(!recruitmentperiod)}
               >
                 상시 모집 버튼
               </StDivRecruitTentperiodFalse>
             ) : (
               <StDivRecruitTentperiodTrue
-                onClick={() => setRecruittentperiod(!recruittentperiod)}
+                onClick={() => setRecruitmentperiod(!recruitmentperiod)}
               >
                 상시 모집 버튼
               </StDivRecruitTentperiodTrue>
