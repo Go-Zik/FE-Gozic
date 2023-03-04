@@ -20,12 +20,18 @@ function Login() {
         user, 
         { withCredentials: true }
       )
-      const jwtToken = response.data.token;
+
+      const jwtToken = response.headers.authorization;
+      
       console.log(response);
       console.log(response.headers);
+      console.log(response.headers.authorization)
+
+      let token = jwtToken.split(' ')[1]
+
       setCookies('userToken', jwtToken) // 쿠키에 토큰 저장
-      const decodedUserInfo = jwtDecode(jwtToken, {header: true}) // 토큰 decode
-      // console.log(decodedUserInfo);
+      const decodedUserInfo = jwtDecode(token, {header: true}) // 토큰 decode
+      console.log(decodedUserInfo);
       localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)) //토큰에 저장되어있는 userInfo 저장
       alert('로그인완료')
       navigate('/')

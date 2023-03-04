@@ -89,7 +89,6 @@ const Header = ({ children, user }) => {
 export default Header
 
 const HeaderContainer = styled.div`
-  position: fixed;
   top: 0;
   width: 100%;
   height: auto;
@@ -97,6 +96,7 @@ const HeaderContainer = styled.div`
 `
 
 const IndexHeader = styled.div`
+  position: fixed; top: 0;
   width: 100%;
   height: 52px;
   padding: 0 28px;
