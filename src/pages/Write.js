@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { addRecruit } from '../api/detailapi'
+import { addIncruit } from '../api/detailapi'
 
 function Write() {
   const navigate = useNavigate()
@@ -67,7 +67,7 @@ function Write() {
   }
 
   const queryClient = useQueryClient()
-  const addMutation = useMutation(addRecruit, {
+  const addMutation = useMutation(addIncruit, {
     onSuccess: () => {
       queryClient.invalidateQueries('recruits')
     },
@@ -263,7 +263,7 @@ export default Write
 
 const StDivWrap = styled.div`
   width: 750px;
-  padding: 35px 0px;
+  padding: 45px 0px;
   padding-bottom: 20px;
   margin: 20px auto;
   position: relative;
