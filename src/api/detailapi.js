@@ -4,7 +4,7 @@ import { getCookie } from '../util/cookie'
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_SERVER,
   headers: {
-    authorization: `Bearer ${getCookie('userToken')}`,
+    authorization: `${getCookie('userToken')}`,
   }
 })
 
