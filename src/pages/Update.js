@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react'
-import { useMutation, useQueryClient } from 'react-query'
-import { useNavigate } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { addIncruit } from '../api/detailapi'
+import { addIncruit, getRecruit } from '../api/detailapi'
 
-function Write() {
+function Update() {
   const navigate = useNavigate()
+  const param = useParams();
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -65,6 +66,7 @@ function Write() {
       setViewImg(reader.result)
     }
   }
+  // const {isLoading, isError, data} = useQuery('incruit', () => getRecruit(param.id))
 
   const queryClient = useQueryClient()
   const addMutation = useMutation(addIncruit, {
@@ -73,8 +75,8 @@ function Write() {
     },
   })
 
-  // 추가 버튼 클릭시
-  const addButton = () => {
+  // 수정 완료 버튼 클릭시
+  const updateButton = () => {
     const formData = new FormData()
 
     const newData = {
@@ -86,27 +88,7 @@ function Write() {
       recruitmentperiod,
       job,
     }
-
-    // for (let i of [
-    //   title,
-    //   description,
-    //   companytype,
-    //   startdate,
-    //   enddate,
-    //   recruitmentperiod,
-    //   job,
-    // ]) {
-    //   formData.append(
-    //     `${i}`,
-    //     i
-    // new Blob([JSON.stringify(i)], {
-    //   type: 'application/json',
-    // })
-    //   )
-    // }
-    // formData.append('job', new Blob([JSON.stringify(job)], {
-    //   type: 'application/json'
-    // }))
+    
     const json = JSON.stringify(newData)
     const blob = new Blob([json], { type: 'application/json' })
     formData.append('data', blob)
@@ -127,6 +109,8 @@ function Write() {
       return
     }
   }
+  console.log(param.id)
+
   return (
     <StDivWrap>
       <StDivContainer>
@@ -250,14 +234,14 @@ function Write() {
         />
       </StDivRecruitContent>
       <StDivLast>
-        <StBtnAdd onClick={addButton}>작성</StBtnAdd>
+        <StBtnAdd onClick={updateButton}>수정 완료</StBtnAdd>
         <StBtnAdd onClick={cancelButton}>취소</StBtnAdd>
       </StDivLast>
     </StDivWrap>
   )
 }
 
-export default Write
+export default Update
 
 const StDivWrap = styled.div`
   width: 750px;
