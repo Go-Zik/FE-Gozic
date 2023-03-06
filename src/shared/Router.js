@@ -7,7 +7,7 @@ import Write from '../pages/Write'
 import DetailRecruit from '../pages/DetailRecruit'
 import Header from '../pages/Header'
 import Recruit from '../pages/Recruit'
-
+import Update from '../pages/Update'
 
 const Router = () => {
     return (
@@ -21,6 +21,7 @@ const Router = () => {
           <Route path="/write" element={<Write />} />
           <Route path="/detail/recruit/:id" element={<DetailRecruit />} />
           <Route path="/recruit" element={<Recruit />} />
+          <Route path="/update/:id" element={<Update />} />
         </Route>
       </Routes>
     </BrowserRouter>
