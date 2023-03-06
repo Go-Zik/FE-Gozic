@@ -16,17 +16,10 @@ function Login() {
   const loginHandler = async () => {
     try {
       const response  = await axios.post(
-        `http://13.124.198.174:8080/api/user/login`, 
+        `${process.env.REACT_APP_SERVER}/api/user/login`, 
         user, 
-        { withCredentials: true }
       )
-
       const jwtToken = response.headers.authorization;
-      
-      console.log(response);
-      console.log(response.headers);
-      console.log(response.headers.authorization)
-
       let token = jwtToken.split(' ')[1]
 
       setCookies('userToken', jwtToken) // 쿠키에 토큰 저장

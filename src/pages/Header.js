@@ -71,13 +71,13 @@ const Header = ({ children, user }) => {
         </IndexLeft>
         {userInfo ? (
           <IndexRight>
-            <Name> 테스트 유저 {userInfo.sub}</Name>
+            <Name> {userInfo.alg} 안녕하세요!</Name>
             <Button onClick={logoutHandler}>Logout</Button>
           </IndexRight>
         ) : (
           <IndexRight>
             <LoginButton onClick={() => navigate('/login')}>회원가입/로그인</LoginButton>
-            <EnterpriseButton>기업서비스</EnterpriseButton>
+            <EnterpriseButton onClick={logoutHandler}>기업서비스</EnterpriseButton>
           </IndexRight>
         )}
       </IndexHeader>
@@ -96,7 +96,8 @@ const HeaderContainer = styled.div`
 `
 
 const IndexHeader = styled.div`
-  position: fixed; top: 0;
+  position: fixed; 
+  top: 0;
   width: 100%;
   height: 52px;
   padding: 0 28px;
