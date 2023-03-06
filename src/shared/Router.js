@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { getUser } from '../util/localstorage'
 import Login from '../pages/Login'
 import Detail from '../pages/Detail'
 import Mainpage from '../pages/Mainpage'
@@ -11,7 +10,6 @@ import Recruit from '../pages/Recruit'
 
 
 const Router = () => {
-    const userInfo = getUser()
     return (
     <BrowserRouter>
       <Routes>

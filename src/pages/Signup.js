@@ -25,7 +25,7 @@ function Signup() {
     console.log(body)
 
     const response = await axios.post(
-      `http://13.124.198.174:8080/api/user/join`, 
+      `${process.env.REACT_APP_SERVER}/api/user/join`, 
       body, 
       { withCredentials: true }
     );
