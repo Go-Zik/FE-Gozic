@@ -1,7 +1,9 @@
 import React from 'react'
 import { useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { getRecruitAll } from '../api/detailapi'
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 
 const Detail = () => {
   const day = [
@@ -37,16 +39,22 @@ const Detail = () => {
     '30',
     '31',
   ]
+  const navigate = useNavigate()
   const { isLoading, isError, data } = useQuery('incruit', getRecruitAll)
   if (isLoading) return <h1>로딩중</h1>
   if (isError) return <h1>에러</h1>
-
-  console.log(data)
-
   return (
     <>
       <StDivWrap>
-        <StDivMonth>2023.03</StDivMonth>
+        <StDivMonth>
+          <StSpanArrow>
+            <FaAngleLeft />
+          </StSpanArrow>
+          2023.03
+          <StSpanArrow>
+            <FaAngleRight />
+          </StSpanArrow>
+        </StDivMonth>
         <StDivWeekendWrap>
           <StDivWeekend>WED</StDivWeekend>
           <StDivWeekend>THR</StDivWeekend>
@@ -61,16 +69,41 @@ const Detail = () => {
             return (
               <StDivDayWrap key={index}>
                 <StDivDay>
-                  <div>{item}</div>
-                  <StDivContent>공고 내용</StDivContent>
-                  {data.map((date) => {
+                  <StDivNum>{item}</StDivNum>
+                  {data.map((date, index) => {
                     const startDate = date.startDate
                     const [y, m, d] = startDate.split('-')
 
                     return item === d ? (
-                      <p> {date.nickname} </p> 
-                      )
-                    : null
+                      <div key={index}>
+                        <StPTitle
+                          onClick={() => navigate(`/detail/recruit/${date.id}`)}
+                        >
+                          <StSpanStart>시</StSpanStart> {date.nickname}
+                        </StPTitle>
+                      </div>
+                    ) : null
+                  })}
+                  {data.map((date, index) => {
+                    if (date.lastDate === null) {
+                      return
+                    } else {
+                      const lastDate = date.lastDate
+                      const [y, m, d] = lastDate.split('-')
+
+                      return item === d ? (
+                        <div key={index}>
+                          <StPTitle
+                            onClick={() =>
+                              navigate(`/detail/recruit/${date.id}`)
+                            }
+                          >
+                            <StSpanEnd>끝</StSpanEnd>
+                            {date.nickname}
+                          </StPTitle>
+                        </div>
+                      ) : null
+                    }
                   })}
                 </StDivDay>
               </StDivDayWrap>
@@ -96,6 +129,14 @@ const StDivMonth = styled.div`
   color: #ff6813;
   font-weight: 600;
 `
+const StSpanArrow = styled.span`
+  color: #bbbbbb;
+  font-weight: 100;
+  line-height: 10px;
+  margin: 20px 10px 0px 10px;
+  position: relative;
+  top: 4px;
+`
 const StDivWeekendWrap = styled.div`
   display: flex;
   gap: 2px;
@@ -111,19 +152,41 @@ const StDiv = styled.div`
   display: flex;
   flex-wrap: wrap;
   text-align: center;
+  gap: 1px;
 `
 const StDivDayWrap = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
   width: calc(100% / 7 - 1px);
-  outline-offset: -1px;
+  border: 1px solid #EEEEEE;
+  box-sizing: border-box;
 `
 const StDivDay = styled.div`
-  margin: 1px;
+  min-height: 150px;
   text-align: center;
-  box-sizing: border-box;
+`
+const StDivNum = styled.div`
+  min-width: calc(100% / 7 - 1px);
+  min-height: 22px;
+  background-color: #fafafa;
 `
 const StDivContent = styled.div`
   text-align: center;
+`
+const StSpanStart = styled.span`
+  border-radius: 2px;
+  background-color: #ff6813;
+  color: #fff;
+`
+const StSpanEnd = styled.span`
+  border-radius: 2px;
+  background-color: #3f4b5e;
+  color: #fff;
+`
+const StPTitle = styled.p`
+  text-overflow: ellipsis;
+  word-break: normal;
+  font-size: 13px;
+  cursor: pointer;
 `

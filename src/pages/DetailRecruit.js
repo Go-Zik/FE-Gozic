@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useQuery } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { deleteIncruitapi, favoriteIncruit, getRecruit } from '../api/detailapi'
+import { deleteIncruitapi, favoriteIncruit, getRecruit, getRecruitAll } from '../api/detailapi'
 
 function DetailRecruit() {
   const param = useParams()
@@ -11,6 +11,7 @@ function DetailRecruit() {
   const { isLoading, isError, data } = useQuery('recruit', () =>
     getRecruit(param.id)
   )
+  // const {isLoadingAll, isErrorAll, dataAll, dataAll2} = useQuery('allrecruit', getRecruitAll)
 
   if (isLoading) return <h1>로딩중</h1>
   if (isError) return <h1>error</h1>
@@ -31,7 +32,7 @@ function DetailRecruit() {
     }
   }
   const clickFavorite = () => {
-    // favoriteIncruit(param.id)
+    favoriteIncruit(param.id)
     setFavorite(!favorite)
   }
 
@@ -39,8 +40,10 @@ function DetailRecruit() {
     navigate(`/update/${param.id}`)
   }
 
-  // if(isLoading) return <h1>로딩중</h1>
-  // if(isError) return <h1>error</h1>
+  if(isLoading) return <h1>로딩중</h1>
+  if(isError) return <h1>error</h1>
+
+  console.log(data)
 
   return (
     <StDivWrap>
@@ -48,7 +51,7 @@ function DetailRecruit() {
         {' '}
         {/* Container */}
         <StDivLogo>
-          <img src={`${data.logo}`} />
+          <StImgLogo src={`${data.logo}`} />
         </StDivLogo>
         <div>
           <StDivTitle>
@@ -96,7 +99,7 @@ function DetailRecruit() {
           return (
             <StDivRecruitContent key={index}>
               <div style={{ width: '122px' }}>
-                <StSpanRecruitTpye>{job.imcruitType}</StSpanRecruitTpye>
+                <StSpanRecruitTpye>{job.incruitType}</StSpanRecruitTpye>
               </div>
               <div style={{ width: '300px' }}>
                 <StSpanJobDetail>{job.jobDetail}</StSpanJobDetail>
@@ -156,6 +159,9 @@ const StDivLogo = styled.div`
   width: 90px;
   height: 140px;
   margin: 0px 25px 0px 20px;
+`
+const StImgLogo = styled.img`
+  width: 90px;
 `
 // 기업 이름
 const StPTitle = styled.p`

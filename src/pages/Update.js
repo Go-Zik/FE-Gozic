@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { addIncruit, getRecruit } from '../api/detailapi'
+import { addIncruit, getRecruit, updateIncruit } from '../api/detailapi'
 
 function Update() {
   const navigate = useNavigate()
@@ -28,6 +28,8 @@ function Update() {
 
   const [incruittype, setIncruittype] = useState('')
   const [jobdetail, setJobdetail] = useState('')
+  
+  const {isLoading, isError, data} = useQuery('detail', () => getRecruit(param.id))
 
   const addJobHandler = () => {
     if (incruittype !== '' && jobdetail !== '') {
@@ -69,7 +71,7 @@ function Update() {
   // const {isLoading, isError, data} = useQuery('incruit', () => getRecruit(param.id))
 
   const queryClient = useQueryClient()
-  const addMutation = useMutation(addIncruit, {
+  const updateMutation = useMutation(updateIncruit, {
     onSuccess: () => {
       queryClient.invalidateQueries('recruits')
     },
@@ -96,7 +98,7 @@ function Update() {
     formData.append('logo', logo)
     formData.append('image', image)
 
-    addMutation.mutate(formData)
+    updateMutation.mutate(formData)
   }
   // 취소 버튼 클릭시
   const cancelButton = () => {
@@ -109,7 +111,11 @@ function Update() {
       return
     }
   }
-  console.log(param.id)
+
+  if(isLoading) return <h1>로딩중</h1>
+  if(isError) return <h1>error</h1>
+
+  console.log(data)
 
   return (
     <StDivWrap>
@@ -131,7 +137,7 @@ function Update() {
               type="text"
               placeholder="기업 명을 작성해주세요"
               onChange={(e) => setTitle(e.target.value)}
-              value={title}
+              defaultValue={data.nickname}
             />
           </div>
           <div>
@@ -141,6 +147,7 @@ function Update() {
                 type="date"
                 id="startDate"
                 onChange={(e) => setStartDate(e.target.value)}
+                defaultValue={data.startDate}
               />
             </p>
 
@@ -150,6 +157,7 @@ function Update() {
                 type="date"
                 id="endDate"
                 onChange={(e) => setEnddate(e.target.value)}
+                defaultValue={data.lastDate}
               />
             </p>
           </div>
@@ -229,7 +237,7 @@ function Update() {
           type="text"
           name="description"
           placeholder="내용을 작성해주세요"
-          value={description}
+          defaultValue={data.description}
           onChange={(e) => setDescription(e.target.value)}
         />
       </StDivRecruitContent>
