@@ -90,7 +90,6 @@ const Detail = () => {
                     } else {
                       const lastDate = date.lastDate
                       const [y, m, d] = lastDate.split('-')
-
                       return item === d ? (
                         <div key={index}>
                           <StPTitle

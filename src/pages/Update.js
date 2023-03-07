@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -6,7 +6,7 @@ import { addIncruit, getRecruit, updateIncruit } from '../api/detailapi'
 
 function Update() {
   const navigate = useNavigate()
-  const param = useParams();
+  const param = useParams()
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -28,8 +28,22 @@ function Update() {
 
   const [incruittype, setIncruittype] = useState('')
   const [jobdetail, setJobdetail] = useState('')
-  
-  const {isLoading, isError, data} = useQuery('detail', () => getRecruit(param.id))
+
+  const { isLoading, isError, data } = useQuery('detail', () =>
+    getRecruit(param.id)
+  )
+  // useEffect가 undefined인지 아닌지 확인해서 undefined가 아닐 때 세팅을 다시
+  useEffect(() => {
+    setTitle(data?.nickname)
+    setDescription(data?.description)
+    setStartDate(data?.startDate)
+    setEnddate(data?.lastDate)
+    // 안 될 것 같긴 함
+    // setImg(data?.image)
+    // setLogo(data?.logo)
+
+    // setJob([data?.job])
+  }, [data])
 
   const addJobHandler = () => {
     if (incruittype !== '' && jobdetail !== '') {
@@ -68,7 +82,6 @@ function Update() {
       setViewImg(reader.result)
     }
   }
-  // const {isLoading, isError, data} = useQuery('incruit', () => getRecruit(param.id))
 
   const queryClient = useQueryClient()
   const updateMutation = useMutation(updateIncruit, {
@@ -78,44 +91,47 @@ function Update() {
   })
 
   // 수정 완료 버튼 클릭시
-  const updateButton = () => {
-    const formData = new FormData()
+  const updateButton = (id) => {
+    if (window.confirm('수정하시겠습니까?') === true) {
+      const formData = new FormData()
 
-    const newData = {
-      title,
-      description,
-      companytype,
-      startdate,
-      enddate,
-      recruitmentperiod,
-      job,
+      const newData = {
+        title,
+        description,
+        companytype,
+        startdate,
+        enddate,
+        recruitmentperiod,
+        job,
+      }
+
+      const json = JSON.stringify(newData)
+      const blob = new Blob([json], { type: 'application/json' })
+      formData.append('data', blob)
+
+      formData.append('logo', logo)
+      formData.append('image', image)
+
+      updateMutation.mutate({ formData, id })
+      navigate('/detail')
+    } else {
+      return
     }
-    
-    const json = JSON.stringify(newData)
-    const blob = new Blob([json], { type: 'application/json' })
-    formData.append('data', blob)
-
-    formData.append('logo', logo)
-    formData.append('image', image)
-
-    updateMutation.mutate(formData)
   }
   // 취소 버튼 클릭시
   const cancelButton = () => {
-    if (
-      window.confirm('작성을 취소하시겠습니까? 메인 화면으로 돌아갑니다') ===
-      true
-    ) {
+    if (window.confirm('작성을 취소하시겠습니까? 메인 화면으로 돌아갑니다') === true) {
       navigate('/')
     } else {
       return
     }
   }
 
-  if(isLoading) return <h1>로딩중</h1>
-  if(isError) return <h1>error</h1>
+  if (isLoading) return <h1>로딩중</h1>
+  if (isError) return <h1>error</h1>
 
   console.log(data)
+  console.log(data.job)
 
   return (
     <StDivWrap>
@@ -211,10 +227,7 @@ function Update() {
               <StDivResultContent key={`${job}_${i}`}>
                 {/* id값이 아닌 다른걸 사용 */}
                 <StSpanTpye>고용 형태 : {job.incruittype}</StSpanTpye>
-                <StSpanJobdetail>
-                  {' '}
-                  담당할 업무 : {job.jobdetail}
-                </StSpanJobdetail>
+                <StSpanJobdetail>담당할 업무 : {job.jobdetail}</StSpanJobdetail>
               </StDivResultContent>
             )
           })}
@@ -242,7 +255,7 @@ function Update() {
         />
       </StDivRecruitContent>
       <StDivLast>
-        <StBtnAdd onClick={updateButton}>수정 완료</StBtnAdd>
+        <StBtnAdd onClick={() => updateButton(param.id)}>수정 완료</StBtnAdd>
         <StBtnAdd onClick={cancelButton}>취소</StBtnAdd>
       </StDivLast>
     </StDivWrap>

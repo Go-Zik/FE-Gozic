@@ -2,7 +2,12 @@ import React, { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { deleteIncruitapi, favoriteIncruit, getRecruit, getRecruitAll } from '../api/detailapi'
+import {
+  deleteIncruitapi,
+  favoriteIncruit,
+  getRecruit,
+  getRecruitAll,
+} from '../api/detailapi'
 
 function DetailRecruit() {
   const param = useParams()
@@ -13,18 +18,18 @@ function DetailRecruit() {
   )
   // const {isLoadingAll, isErrorAll, dataAll, dataAll2} = useQuery('allrecruit', getRecruitAll)
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   const deleteMutation = useMutation(deleteIncruitapi, {
     onSuccess: () => {
       queryClient.invalidateQueries('incruit')
     },
     onError: (error) => {
       console.log(error)
-    }
+    },
   })
 
   const deleteButton = (id) => {
-    if(window.confirm('공고를 삭제하시겠습니까?') === true) {
+    if (window.confirm('공고를 삭제하시겠습니까?') === true) {
       deleteMutation.mutate(id)
       navigate('/detail')
     } else {
@@ -50,10 +55,10 @@ function DetailRecruit() {
     navigate(`/update/${param.id}`)
   }
 
-  if(isLoading) return <h1>로딩중</h1>
-  if(isError) return <h1>error</h1>
+  if (isLoading) return <h1>로딩중</h1>
+  if (isError) return <h1>error</h1>
 
-  console.log(data.last)
+  // console.log(data)
 
   return (
     <StDivWrap>
@@ -83,18 +88,17 @@ function DetailRecruit() {
           </StDivTitle>
           <div>
             <StPDate>
-              {
-                data.lastDate === null ? (
-                  <> {data.startDate} ~ </>
-                ) : (
-                  <> {data.startDate} ~ {data.lastDate}</>
-                )
-              }
-              
-              {diff > 0 ? (
-                <StSpanDDay>({diff}일 남음)</StSpanDDay>
+              {data.lastDate === null ? (
+                <> {data.startDate} ~ </>
               ) : (
-                <StSpanDDay>({diff}일 지남)</StSpanDDay>
+                <>
+                  {data.startDate} ~ {data.lastDate}
+                  {diff > 0 ? (
+                    <StSpanDDay>({diff}일 남음)</StSpanDDay>
+                  ) : (
+                    <StSpanDDay>({diff}일 지남)</StSpanDDay>
+                  )}
+                </>
               )}
             </StPDate>
           </div>
@@ -104,8 +108,8 @@ function DetailRecruit() {
             <StBtnLink>기업 공체 전략</StBtnLink>
           </StDivLink>
           <StDivCount>
-            <StSpanCount>공고 조회 1002회 | </StSpanCount>
-            <StSpanCount>즐겨찾기 7회 | </StSpanCount>
+            <StSpanCount>공고 조회 {data.viewcount}회 | </StSpanCount>
+            <StSpanCount>즐겨찾기 {data.favorite}회 | </StSpanCount>
             <StSpanCount>홈페이지 방문 2회</StSpanCount>
           </StDivCount>
         </div>

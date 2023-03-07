@@ -30,7 +30,9 @@ export const addIncruit = async (formData) => {
   })
 }
 //채용 공고 수정
-export const updateIncruit = async (formData, id) => {
+export const updateIncruit = async ({formData, id}) => {
+  console.log("formData", formData)
+  console.log("id", id)
   await instance.put(`/api/recruit/${id}`, formData)
 }
 
@@ -46,5 +48,5 @@ export const deleteIncruitapi = async (id) => {
 
 // 즐가찾기 추가
 export const favoriteIncruit = async (id) => {
-  await instance.post(`/api/favorite/${id}`)
+  await axios.post(`${process.env.REACT_APP_SERVER}/api/favorite/${id}`)
 }
