@@ -8,10 +8,16 @@ export const instance = axios.create({
   }
 })
 
+// 공고 페이지
+export const getRecruitAll = async() => {
+  const data = await axios.get(`${process.env.REACT_APP_SERVER}/api/recruit`)
+  return data.data
+}
+
 // 채용 공고 조회
 export const getRecruit = async (id) => {
-  const data = await instance.get(`/api/recruit/${id}`)
-  return data
+  const data = await axios.get(`${process.env.REACT_APP_SERVER}/api/recruit/${id}`)
+  return data.data
 }
 
 // 채용 공고 추가

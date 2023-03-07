@@ -8,7 +8,18 @@ function DetailRecruit() {
   const param = useParams()
   const navigate = useNavigate()
   const [favorite, setFavorite] = useState(false)
-  // const { isLoading, isError, data } = useQuery('recruit', () => getRecruit(param.id))
+  const { isLoading, isError, data } = useQuery('recruit', () =>
+    getRecruit(param.id)
+  )
+
+  if (isLoading) return <h1>로딩중</h1>
+  if (isError) return <h1>error</h1>
+
+  const nowDay = new Date()
+  const lastDate = new Date(data.lastDate)
+  const diff = Math.floor(
+    (lastDate.getTime() - nowDay.getTime()) / (1000 * 60 * 60 * 24)
+  )
 
   const deleteIncruit = (id) => {
     if (window.confirm('게시글을 삭제하시겠습니까?' === true)) {
@@ -36,23 +47,36 @@ function DetailRecruit() {
       <StDivContainer>
         {' '}
         {/* Container */}
-        <StDivLogo>LOGO IMG{/* <img /> */}</StDivLogo>
+        <StDivLogo>
+          <img src={`${data.logo}`} />
+        </StDivLogo>
         <div>
           <StDivTitle>
             <StPTitle>
-              기업 명은 여기 들어갑니다.
+              {data.nickname}
               {favorite === false ? (
                 <>
-                  <StSpanStar onClick={clickFavorite}><StImgStar src='https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_unselect-0487753c5d876594f017088ec977a7f006c768bfcc975c19c4d9ebe00e322bb1.png' /></StSpanStar>
+                  <StSpanStar onClick={clickFavorite}>
+                    <StImgStar src="https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_unselect-0487753c5d876594f017088ec977a7f006c768bfcc975c19c4d9ebe00e322bb1.png" />
+                  </StSpanStar>
                 </>
               ) : (
-                <StSpanStar onClick={clickFavorite}><StImgStar src='https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_select-c30fc8f4e82378168df71dcc2dc8cba105a91597fa5c771b1600636f3544d976.png'/></StSpanStar>
+                <StSpanStar onClick={clickFavorite}>
+                  <StImgStar src="https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_select-c30fc8f4e82378168df71dcc2dc8cba105a91597fa5c771b1600636f3544d976.png" />
+                </StSpanStar>
               )}
             </StPTitle>
             <StBtnDeadLine>수시 채용공고 마감</StBtnDeadLine>
           </StDivTitle>
           <div>
-            <StPDate>2023.02.22 ~ 2023.03.01 (X일 지남)</StPDate>
+            <StPDate>
+              {data.startDate} ~ {data.lastDate}
+              {diff > 0 ? (
+                <StSpanDDay>({diff}일 남음)</StSpanDDay>
+              ) : (
+                <StSpanDDay>({diff}일 지남)</StSpanDDay>
+              )}
+            </StPDate>
           </div>
           <StDivLink>
             <StBtnLink>채용 사이트</StBtnLink>
@@ -68,17 +92,21 @@ function DetailRecruit() {
       </StDivContainer>
       {/* JobContent */}
       <div>
-        <StDivRecruitContent>
-          <div style={{ width: '122px' }}>
-            <StSpanRecruitTpye>고용 형태</StSpanRecruitTpye>
-          </div>
-          <div style={{ width: '300px' }}>
-            <StSpanJobDetail>담당할 업무</StSpanJobDetail>
-          </div>
-          <div style={{ width: '135px', marginLeft: 'auto' }}>
-            <StBtnJob>자기소개서 쓰기</StBtnJob>
-          </div>
-        </StDivRecruitContent>
+        {data.job.map((job, index) => {
+          return (
+            <StDivRecruitContent key={index}>
+              <div style={{ width: '122px' }}>
+                <StSpanRecruitTpye>{job.imcruitType}</StSpanRecruitTpye>
+              </div>
+              <div style={{ width: '300px' }}>
+                <StSpanJobDetail>{job.jobDetail}</StSpanJobDetail>
+              </div>
+              <div style={{ width: '135px', marginLeft: 'auto' }}>
+                <StBtnJob>자기소개서 쓰기</StBtnJob>
+              </div>
+            </StDivRecruitContent>
+          )
+        })}
 
         <StDivSearchWrap>
           <StPSearch>이런 공고 찾으시나요? 🤖</StPSearch>
@@ -92,10 +120,9 @@ function DetailRecruit() {
         </StDivSearchWrap>
       </div>
       <StDivImg>
-        채용 공고 이미지
-        {/* <img /> */}
+        <StImageImage src={`${data.image}`} />
       </StDivImg>
-      <StDivIncruitContent>채용 공고 내용</StDivIncruitContent>
+      <StDivIncruitContent>{data.description}</StDivIncruitContent>
       <StDivAPI>
         <StDivAPIbutton onClick={updateHandler}> + 수정</StDivAPIbutton>
         <StDivAPIbutton onClick={() => deleteIncruit(param.id)}>
@@ -121,6 +148,7 @@ const StDivContainer = styled.div`
   width: 680px;
   height: 170px;
   padding: 20px 25px 20px 0px;
+  margin-bottom: 30px;
   border: 1px solid #ddd;
   font-size: 16px;
 `
@@ -176,6 +204,10 @@ const StPDate = styled.p`
   font-weight: 400;
   margin-top: 15px;
 `
+const StSpanDDay = styled.span`
+  margin-left: 30px;
+  color: #ff6813;
+`
 // 방문 사이트
 const StDivLink = styled.div`
   width: 358px;
@@ -212,7 +244,6 @@ const StSpanCount = styled.span`
 const StDivRecruitContent = styled.div`
   width: 706px;
   height: 40px;
-  margin-top: 30px;
   border: 1px solid #ddd;
   display: flex;
   align-items: center;
@@ -269,15 +300,14 @@ const StDivSearchItem = styled.div`
 // img
 const StDivImg = styled.div`
   width: 710px;
-  border: 1px solid red;
-  height: 400px;
   margin-top: 20px;
+`
+const StImageImage = styled.img`
+  width: 710px;
 `
 // 채용 공고 내용
 const StDivIncruitContent = styled.div`
   width: 710px;
-  height: 400px;
-  border: 1px solid red;
   margin-top: 20px;
 `
 // 수정 삭제 부분
