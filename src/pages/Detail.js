@@ -110,6 +110,9 @@ const Detail = () => {
             )
           })}
         </StDiv>
+        <StDivWrite onClick={() => navigate('/write')}>
+          <StImgWrite src='https://d2bovrvbszerbl.cloudfront.net/assets/recruit/request_recruit-c3a4aebaf7777803190981cacf943eeaebbb7d2b7d1737893f66811243fa086a.png' />
+        </StDivWrite>
       </StDivWrap>
     </>
   )
@@ -189,4 +192,14 @@ const StPTitle = styled.p`
   word-break: normal;
   font-size: 13px;
   cursor: pointer;
+`
+const StDivWrite = styled.div`
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  cursor: pointer;
+`
+const StImgWrite = styled.img`
+  width: 80px;
+  height: 96px;
 `
