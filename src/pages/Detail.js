@@ -174,9 +174,6 @@ const StDivNum = styled.div`
   min-height: 22px;
   background-color: #fafafa;
 `
-const StDivContent = styled.div`
-  text-align: center;
-`
 const StSpanStart = styled.span`
   border-radius: 2px;
   background-color: #ff6813;

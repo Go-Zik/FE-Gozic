@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { deleteIncruitapi, favoriteIncruit, getRecruit, getRecruitAll } from '../api/detailapi'
@@ -13,6 +13,25 @@ function DetailRecruit() {
   )
   // const {isLoadingAll, isErrorAll, dataAll, dataAll2} = useQuery('allrecruit', getRecruitAll)
 
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation(deleteIncruitapi, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('incruit')
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  })
+
+  const deleteButton = (id) => {
+    if(window.confirm('공고를 삭제하시겠습니까?') === true) {
+      deleteMutation.mutate(id)
+      navigate('/detail')
+    } else {
+      return
+    }
+  }
+
   if (isLoading) return <h1>로딩중</h1>
   if (isError) return <h1>error</h1>
 
@@ -22,15 +41,6 @@ function DetailRecruit() {
     (lastDate.getTime() - nowDay.getTime()) / (1000 * 60 * 60 * 24)
   )
 
-  const deleteIncruit = (id) => {
-    if (window.confirm('게시글을 삭제하시겠습니까?' === true)) {
-      deleteIncruitapi(id)
-
-      navigate('/')
-    } else {
-      return
-    }
-  }
   const clickFavorite = () => {
     favoriteIncruit(param.id)
     setFavorite(!favorite)
@@ -43,7 +53,7 @@ function DetailRecruit() {
   if(isLoading) return <h1>로딩중</h1>
   if(isError) return <h1>error</h1>
 
-  console.log(data)
+  console.log(data.last)
 
   return (
     <StDivWrap>
@@ -73,7 +83,14 @@ function DetailRecruit() {
           </StDivTitle>
           <div>
             <StPDate>
-              {data.startDate} ~ {data.lastDate}
+              {
+                data.lastDate === null ? (
+                  <> {data.startDate} ~ </>
+                ) : (
+                  <> {data.startDate} ~ {data.lastDate}</>
+                )
+              }
+              
               {diff > 0 ? (
                 <StSpanDDay>({diff}일 남음)</StSpanDDay>
               ) : (
@@ -128,7 +145,7 @@ function DetailRecruit() {
       <StDivIncruitContent>{data.description}</StDivIncruitContent>
       <StDivAPI>
         <StDivAPIbutton onClick={updateHandler}> + 수정</StDivAPIbutton>
-        <StDivAPIbutton onClick={() => deleteIncruit(param.id)}>
+        <StDivAPIbutton onClick={() => deleteButton(param.id)}>
           {' '}
           + 삭제
         </StDivAPIbutton>

@@ -69,52 +69,57 @@ function Write() {
   const queryClient = useQueryClient()
   const addMutation = useMutation(addIncruit, {
     onSuccess: () => {
-      queryClient.invalidateQueries('recruits')
+      queryClient.invalidateQueries('incruit')
     },
   })
 
   // 추가 버튼 클릭시
   const addButton = () => {
-    const formData = new FormData()
+    if (window.confirm('작성을 완료하시겠습니까?') === true) {
+      const formData = new FormData()
 
-    const newData = {
-      title,
-      description,
-      companytype,
-      startdate,
-      enddate,
-      recruitmentperiod,
-      job,
+      const newData = {
+        title,
+        description,
+        companytype,
+        startdate,
+        enddate,
+        recruitmentperiod,
+        job,
+      }
+
+      // for (let i of [
+      //   title,
+      //   description,
+      //   companytype,
+      //   startdate,
+      //   enddate,
+      //   recruitmentperiod,
+      //   job,
+      // ]) {
+      //   formData.append(
+      //     `${i}`,
+      //     i
+      // new Blob([JSON.stringify(i)], {
+      //   type: 'application/json',
+      // })
+      //   )
+      // }
+      // formData.append('job', new Blob([JSON.stringify(job)], {
+      //   type: 'application/json'
+      // }))
+      const json = JSON.stringify(newData)
+      const blob = new Blob([json], { type: 'application/json' })
+      formData.append('data', blob)
+
+      formData.append('logo', logo)
+      formData.append('image', image)
+
+      addMutation.mutate(formData)
+      navigate('/detail')
+    } else {
+      return
     }
-
-    // for (let i of [
-    //   title,
-    //   description,
-    //   companytype,
-    //   startdate,
-    //   enddate,
-    //   recruitmentperiod,
-    //   job,
-    // ]) {
-    //   formData.append(
-    //     `${i}`,
-    //     i
-    // new Blob([JSON.stringify(i)], {
-    //   type: 'application/json',
-    // })
-    //   )
-    // }
-    // formData.append('job', new Blob([JSON.stringify(job)], {
-    //   type: 'application/json'
-    // }))
-    const json = JSON.stringify(newData)
-    const blob = new Blob([json], { type: 'application/json' })
-    formData.append('data', blob)
-
-    formData.append('logo', logo)
-    formData.append('image', image)
-
-    addMutation.mutate(formData)
   }
   // 취소 버튼 클릭시
   const cancelButton = () => {
