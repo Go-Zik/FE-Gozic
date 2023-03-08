@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -39,6 +39,10 @@ const Detail = () => {
     '30',
     '31',
   ]
+  const date = new Date().toLocaleDateString('en-us');
+  const [m, d, y] = date.split('/')
+  const [month, setMonth] = useState(m)
+
   const navigate = useNavigate()
   const { isLoading, isError, data } = useQuery('incruit', getRecruitAll)
   if (isLoading) return <h1>로딩중</h1>
@@ -50,7 +54,7 @@ const Detail = () => {
           <StSpanArrow>
             <FaAngleLeft />
           </StSpanArrow>
-          2023.03
+          2023.0{month}
           <StSpanArrow>
             <FaAngleRight />
           </StSpanArrow>

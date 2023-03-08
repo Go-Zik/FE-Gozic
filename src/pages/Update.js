@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { addIncruit, getRecruit, updateIncruit } from '../api/detailapi'
+import { getRecruit, updateIncruit } from '../api/detailapi'
 
 function Update() {
   const navigate = useNavigate()
@@ -88,39 +88,58 @@ function Update() {
     onSuccess: () => {
       queryClient.invalidateQueries('recruits')
     },
+    onError: () => {
+      alert('본인 공고만 수정할 수 있습니다.')
+    } 
   })
 
   // 수정 완료 버튼 클릭시
   const updateButton = (id) => {
-    if (window.confirm('수정하시겠습니까?') === true) {
-      const formData = new FormData()
+    if (
+      title !== '' &&
+      description !== '' &&
+      companytype !== '' &&
+      startdate !== '' &&
+      enddate !== '' &&
+      job !== [] &&
+      image !== null &&
+      logo !== null
+    ) {
+      if (window.confirm('수정하시겠습니까?') === true) {
+        const formData = new FormData()
 
-      const newData = {
-        title,
-        description,
-        companytype,
-        startdate,
-        enddate,
-        recruitmentperiod,
-        job,
+        const newData = {
+          title,
+          description,
+          companytype,
+          startdate,
+          enddate,
+          recruitmentperiod,
+          job,
+        }
+
+        const json = JSON.stringify(newData)
+        const blob = new Blob([json], { type: 'application/json' })
+        formData.append('data', blob)
+
+        formData.append('logo', logo)
+        formData.append('image', image)
+
+        updateMutation.mutate({ formData, id })
+        navigate('/detail')
+      } else {
+        return
       }
-
-      const json = JSON.stringify(newData)
-      const blob = new Blob([json], { type: 'application/json' })
-      formData.append('data', blob)
-
-      formData.append('logo', logo)
-      formData.append('image', image)
-
-      updateMutation.mutate({ formData, id })
-      navigate('/detail')
     } else {
-      return
+      alert('내용을 모두 채워주세요')
     }
   }
   // 취소 버튼 클릭시
   const cancelButton = () => {
-    if (window.confirm('작성을 취소하시겠습니까? 메인 화면으로 돌아갑니다') === true) {
+    if (
+      window.confirm('작성을 취소하시겠습니까? 메인 화면으로 돌아갑니다') ===
+      true
+    ) {
       navigate('/')
     } else {
       return

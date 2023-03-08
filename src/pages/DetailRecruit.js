@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -6,17 +6,39 @@ import {
   deleteIncruitapi,
   favoriteIncruit,
   getRecruit,
-  getRecruitAll,
+  recentRecruit,
 } from '../api/detailapi'
+import RecentRecruitComponents from '../components/RecentRecruitComponents'
 
 function DetailRecruit() {
   const param = useParams()
   const navigate = useNavigate()
   const [favorite, setFavorite] = useState(false)
+
+  // const TOTAL_SLIDE = 2
+  // const slideRef = useRef(null)
+  // const [currentSlide, setCurrentSlide] = useState(0)
+
+  // const nextSlide = () => {
+  //   if (currentSlide >= TOTAL_SLIDE) {
+  //     setCurrentSlide(0)
+  //   } else {
+  //     setCurrentSlide(currentSlide + 1)
+  //   }
+  // }
+  // const prevSlide = () => {
+  //   if (currentSlide === 0) {
+  //     setCurrentSlide(0)
+  //   } else {
+  //     setCurrentSlide(currentSlide - 1)
+  //   }
+  // }
+
   const { isLoading, isError, data } = useQuery('recruit', () =>
     getRecruit(param.id)
   )
-  // const {isLoadingAll, isErrorAll, dataAll, dataAll2} = useQuery('allrecruit', getRecruitAll)
+
+  const resultAll = useQuery('recruitAll', recentRecruit)
 
   const queryClient = useQueryClient()
   const deleteMutation = useMutation(deleteIncruitapi, {
@@ -36,9 +58,18 @@ function DetailRecruit() {
       return
     }
   }
+  // useEffect(() => {
+  //   slideRef.current.style.transition = 'all 0.5s ease-in-out'
+  //   slideRef.current.style.transform = `translateX(-${currentSlide}00%)`
+  // }, [currentSlide])
 
   if (isLoading) return <h1>로딩중</h1>
   if (isError) return <h1>error</h1>
+  if (resultAll.isLoading === true) return <h1>로딩중</h1>
+  if (resultAll.isError) return <h1>error</h1>
+
+  const resultData = resultAll.data.data
+  console.log(resultData)
 
   const nowDay = new Date()
   const lastDate = new Date(data.lastDate)
@@ -55,106 +86,113 @@ function DetailRecruit() {
     navigate(`/update/${param.id}`)
   }
 
-  if (isLoading) return <h1>로딩중</h1>
-  if (isError) return <h1>error</h1>
-
-  // console.log(data)
-
   return (
-    <StDivWrap>
-      <StDivContainer>
-        {' '}
-        {/* Container */}
-        <StDivLogo>
-          <StImgLogo src={`${data.logo}`} />
-        </StDivLogo>
-        <div>
-          <StDivTitle>
-            <StPTitle>
-              {data.nickname}
-              {favorite === false ? (
-                <>
-                  <StSpanStar onClick={clickFavorite}>
-                    <StImgStar src="https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_unselect-0487753c5d876594f017088ec977a7f006c768bfcc975c19c4d9ebe00e322bb1.png" />
-                  </StSpanStar>
-                </>
-              ) : (
-                <StSpanStar onClick={clickFavorite}>
-                  <StImgStar src="https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_select-c30fc8f4e82378168df71dcc2dc8cba105a91597fa5c771b1600636f3544d976.png" />
-                </StSpanStar>
-              )}
-            </StPTitle>
-            <StBtnDeadLine>수시 채용공고 마감</StBtnDeadLine>
-          </StDivTitle>
+    <>
+      <StDivWrap>
+        <StDivContainer>
+          <StDivLogo>
+            <StImgLogo src={`${data.logo}`} />
+          </StDivLogo>
           <div>
-            <StPDate>
-              {data.lastDate === null ? (
-                <> {data.startDate} ~ </>
-              ) : (
-                <>
-                  {data.startDate} ~ {data.lastDate}
-                  {diff > 0 ? (
-                    <StSpanDDay>({diff}일 남음)</StSpanDDay>
-                  ) : (
-                    <StSpanDDay>({diff}일 지남)</StSpanDDay>
-                  )}
-                </>
-              )}
-            </StPDate>
+            <StDivTitle>
+              <StPTitle>
+                {data.nickname}
+                {favorite === false ? (
+                  <>
+                    <StSpanStar onClick={clickFavorite}>
+                      <StImgStar src="https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_unselect-0487753c5d876594f017088ec977a7f006c768bfcc975c19c4d9ebe00e322bb1.png" />
+                    </StSpanStar>
+                  </>
+                ) : (
+                  <StSpanStar onClick={clickFavorite}>
+                    <StImgStar src="https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_select-c30fc8f4e82378168df71dcc2dc8cba105a91597fa5c771b1600636f3544d976.png" />
+                  </StSpanStar>
+                )}
+              </StPTitle>
+              {/* <StBtnDeadLine onClick={deadlineRecruit}>수시 채용공고 마감</StBtnDeadLine> */}
+            </StDivTitle>
+            <div>
+              <StPDate>
+                {data.lastDate === null ? (
+                  <> {data.startDate} ~ </>
+                ) : (
+                  <>
+                    {data.startDate} ~ {data.lastDate}
+                    {diff > 0 ? (
+                      <StSpanDDay>({diff}일 남음)</StSpanDDay>
+                    ) : diff < 0 ? (
+                      <StSpanDDay>({diff}일 지남)</StSpanDDay>
+                    ) : (
+                      <StSpanDDay>당일 마감</StSpanDDay>
+                    )}
+                  </>
+                )}
+              </StPDate>
+            </div>
+            <StDivLink>
+              <StBtnLink>채용 사이트</StBtnLink>
+              <StBtnLink>채용 공고 공유</StBtnLink>
+              <StBtnLink>기업 공체 전략</StBtnLink>
+            </StDivLink>
+            <StDivCount>
+              <StSpanCount>공고 조회 {data.viewcount}회 | </StSpanCount>
+              <StSpanCount>즐겨찾기 {data.favorite}회 | </StSpanCount>
+              <StSpanCount>홈페이지 방문 2회</StSpanCount>
+            </StDivCount>
           </div>
-          <StDivLink>
-            <StBtnLink>채용 사이트</StBtnLink>
-            <StBtnLink>채용 공고 공유</StBtnLink>
-            <StBtnLink>기업 공체 전략</StBtnLink>
-          </StDivLink>
-          <StDivCount>
-            <StSpanCount>공고 조회 {data.viewcount}회 | </StSpanCount>
-            <StSpanCount>즐겨찾기 {data.favorite}회 | </StSpanCount>
-            <StSpanCount>홈페이지 방문 2회</StSpanCount>
-          </StDivCount>
-        </div>
-      </StDivContainer>
-      {/* JobContent */}
-      <div>
-        {data.job.map((job, index) => {
-          return (
-            <StDivRecruitContent key={index}>
-              <div style={{ width: '122px' }}>
-                <StSpanRecruitTpye>{job.incruitType}</StSpanRecruitTpye>
+        </StDivContainer>
+        <div>
+          {data.job.map((job, index) => {
+            return (
+              <div key={index}>
+                <StDivRecruitContent key={index}>
+                  <div style={{ width: '122px' }}>
+                    <StSpanRecruitTpye>{job.incruitType}</StSpanRecruitTpye>
+                  </div>
+                  <div style={{ width: '300px' }}>
+                    <StSpanJobDetail>{job.jobDetail}</StSpanJobDetail>
+                  </div>
+                  <div style={{ width: '135px', marginLeft: 'auto' }}>
+                    <StBtnJob>자기소개서 쓰기</StBtnJob>
+                  </div>
+                </StDivRecruitContent>
               </div>
-              <div style={{ width: '300px' }}>
-                <StSpanJobDetail>{job.jobDetail}</StSpanJobDetail>
-              </div>
-              <div style={{ width: '135px', marginLeft: 'auto' }}>
-                <StBtnJob>자기소개서 쓰기</StBtnJob>
-              </div>
-            </StDivRecruitContent>
-          )
-        })}
+            )
+          })}
+          <RecentRecruitComponents resultData={resultData} />
 
-        <StDivSearchWrap>
-          <StPSearch>이런 공고 찾으시나요? 🤖</StPSearch>
-          {/* display로 하기 */}
-          <StDivSearchContain>
-            <StDivSearchItem>현대 자동차</StDivSearchItem>
-            <StDivSearchItem>기아</StDivSearchItem>
-            <StDivSearchItem>에이치케이이노엔</StDivSearchItem>
-            <StDivSearchItem>포스코케미칼</StDivSearchItem>
-          </StDivSearchContain>
-        </StDivSearchWrap>
-      </div>
-      <StDivImg>
-        <StImageImage src={`${data.image}`} />
-      </StDivImg>
-      <StDivIncruitContent>{data.description}</StDivIncruitContent>
-      <StDivAPI>
-        <StDivAPIbutton onClick={updateHandler}> + 수정</StDivAPIbutton>
-        <StDivAPIbutton onClick={() => deleteButton(param.id)}>
-          {' '}
-          + 삭제
-        </StDivAPIbutton>
-      </StDivAPI>
-    </StDivWrap>
+          {/* <StDivSearchWrap>
+            <StPSearch>이런 공고 찾으시나요? 🤖</StPSearch>
+            <StDivSearchContain ref={slideRef}>
+              {resultData.map((item, index) => {
+                return (
+                  <StDivSearchItem key={index}>
+                    <img
+                      style={{ width: '20px', height: '30px' }}
+                      src={`${item.logo}`}
+                    />
+                    <p>{item.nickname}</p>
+                    <p>{item.viewcount}</p>
+                  </StDivSearchItem>
+                )
+              })}
+            </StDivSearchContain>
+            <div onClick={prevSlide}>이전</div>
+            <div onClick={nextSlide}>다음</div>
+          </StDivSearchWrap> */}
+        </div>
+        <StDivImg>
+          <StImageImage src={`${data.image}`} />
+        </StDivImg>
+        <StDivIncruitContent>{data.description}</StDivIncruitContent>
+        <StDivAPI>
+          <StDivAPIbutton onClick={updateHandler}> + 수정</StDivAPIbutton>
+          <StDivAPIbutton onClick={() => deleteButton(param.id)}>
+            + 삭제
+          </StDivAPIbutton>
+        </StDivAPI>
+      </StDivWrap>
+    </>
   )
 }
 export default DetailRecruit
@@ -313,16 +351,25 @@ const StPSearch = styled.p`
   color: #555555;
 `
 const StDivSearchContain = styled.div`
-  display: flex;
+  display: inline-flex;
   flex-wrap: nowrap;
 `
 const StDivSearchItem = styled.div`
-  width: 130px;
+  width: 140px;
   height: 108px;
   padding: 8px 12px;
   margin: 0px 8px 8px 10px;
   border: 1px solid red;
+  background-color: #ffffff;
+  color: #333333;
+  border-radius: 4px;
+  border: 1px solid #dddddd;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 4%);
   cursor: pointer;
+  :hover {
+    background-color: #fafafa;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 8%);
+  }
 `
 // img
 const StDivImg = styled.div`

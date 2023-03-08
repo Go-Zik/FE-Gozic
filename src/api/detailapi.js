@@ -5,18 +5,20 @@ export const instance = axios.create({
   baseURL: process.env.REACT_APP_SERVER,
   headers: {
     authorization: `${getCookie('userToken')}`,
-  }
+  },
 })
 
 // 공고 페이지
-export const getRecruitAll = async() => {
+export const getRecruitAll = async () => {
   const data = await axios.get(`${process.env.REACT_APP_SERVER}/api/recruit`)
   return data.data
 }
 
 // 채용 공고 조회
 export const getRecruit = async (id) => {
-  const data = await axios.get(`${process.env.REACT_APP_SERVER}/api/recruit/${id}`)
+  const data = await axios.get(
+    `${process.env.REACT_APP_SERVER}/api/recruit/${id}`
+  )
   return data.data
 }
 
@@ -30,9 +32,7 @@ export const addIncruit = async (formData) => {
   })
 }
 //채용 공고 수정
-export const updateIncruit = async ({formData, id}) => {
-  console.log("formData", formData)
-  console.log("id", id)
+export const updateIncruit = async ({ formData, id }) => {
   await instance.put(`/api/recruit/${id}`, formData)
 }
 
@@ -48,5 +48,11 @@ export const deleteIncruitapi = async (id) => {
 
 // 즐가찾기 추가
 export const favoriteIncruit = async (id) => {
-  await axios.post(`${process.env.REACT_APP_SERVER}/api/favorite/${id}`)
+  await instance.post(`/api/favorite/${id}`)
+}
+
+// 최근 공고 조회
+export const recentRecruit = async () => {
+  const data = await axios.get(`${process.env.REACT_APP_SERVER}/api/recruit/recent`)
+  return data
 }
