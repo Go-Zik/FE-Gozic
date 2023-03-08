@@ -15,30 +15,9 @@ function DetailRecruit() {
   const navigate = useNavigate()
   const [favorite, setFavorite] = useState(false)
 
-  // const TOTAL_SLIDE = 2
-  // const slideRef = useRef(null)
-  // const [currentSlide, setCurrentSlide] = useState(0)
-
-  // const nextSlide = () => {
-  //   if (currentSlide >= TOTAL_SLIDE) {
-  //     setCurrentSlide(0)
-  //   } else {
-  //     setCurrentSlide(currentSlide + 1)
-  //   }
-  // }
-  // const prevSlide = () => {
-  //   if (currentSlide === 0) {
-  //     setCurrentSlide(0)
-  //   } else {
-  //     setCurrentSlide(currentSlide - 1)
-  //   }
-  // }
-
   const { isLoading, isError, data } = useQuery('recruit', () =>
     getRecruit(param.id)
   )
-
-  const resultAll = useQuery('recruitAll', recentRecruit)
 
   const queryClient = useQueryClient()
   const deleteMutation = useMutation(deleteIncruitapi, {
@@ -50,6 +29,8 @@ function DetailRecruit() {
     },
   })
 
+  const resultAll = useQuery('recruitAll', recentRecruit)
+
   const deleteButton = (id) => {
     if (window.confirm('공고를 삭제하시겠습니까?') === true) {
       deleteMutation.mutate(id)
@@ -58,10 +39,6 @@ function DetailRecruit() {
       return
     }
   }
-  // useEffect(() => {
-  //   slideRef.current.style.transition = 'all 0.5s ease-in-out'
-  //   slideRef.current.style.transform = `translateX(-${currentSlide}00%)`
-  // }, [currentSlide])
 
   if (isLoading) return <h1>로딩중</h1>
   if (isError) return <h1>error</h1>

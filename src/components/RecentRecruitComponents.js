@@ -28,6 +28,11 @@ function RecentRecruitComponents({ resultData }) {
     slideRef.current.style.transform = `translateX(-${currentSlide}%)`
   }, [currentSlide])
 
+  const moveLink = (id) => {
+    navigate(`/detail/recruit/${id}`)
+    window.location.replace(`/detail/recruit/${id}`)
+  }
+
   console.log(resultData)
 
   return (
@@ -38,7 +43,7 @@ function RecentRecruitComponents({ resultData }) {
           return (
             <StDivSearchItem
               key={index}
-              onClick={() => navigate(`/detail/recruit/${item.id}`)}
+              onClick={() => moveLink(item.id)}
             >
               <img
                 style={{ width: '20px', height: '30px' }}
