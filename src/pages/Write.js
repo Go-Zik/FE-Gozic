@@ -69,52 +69,84 @@ function Write() {
   const queryClient = useQueryClient()
   const addMutation = useMutation(addIncruit, {
     onSuccess: () => {
-      queryClient.invalidateQueries('recruits')
+      queryClient.invalidateQueries('incruit')
+    },
+    onError: (error) => {
+      console.log(error)
     },
   })
+  // 채용 공고 내용 삭제
+  const deleteJobHandler = (v) => {
+    if (window.confirm('채용 내용을 삭제하시겠습니까?') === true) {
+      setJob(job.filter((item) => item.jobDetail !== v))
+    } else {
+      return
+    }
+  }
 
   // 추가 버튼 클릭시
   const addButton = () => {
-    const formData = new FormData()
+    if (logo === null) {
+      alert('기업 로고 이미지를 업로드 해주세요')
+    } else if (title === '') {
+      alert('기업 명을 작성해주세요')
+    } else if (startdate === '') {
+      alert('시작 날짜를 지정해주세요')
+    } else if (companytype === '') {
+      alert('기업 형태를 지정해주세요')
+    } else if (job === []) {
+      alert('채용 형태와 담당할 업무를 추가해주세요')
+    } else if (image === null) {
+      alert('고용 이미지를 업로드 해주세요')
+    } else if (description === '') {
+      alert('공고 내용을 작성해주세요')
+    } else {
+      if (window.confirm('작성을 완료하시겠습니까?') === true) {
+        const formData = new FormData()
 
-    const newData = {
-      title,
-      description,
-      companytype,
-      startdate,
-      enddate,
-      recruitmentperiod,
-      job,
+        const newData = {
+          title,
+          description,
+          companytype,
+          startdate,
+          enddate,
+          recruitmentperiod,
+          job,
+        }
+
+        // for (let i of [
+        //   title,
+        //   description,
+        //   companytype,
+        //   startdate,
+        //   enddate,
+        //   recruitmentperiod,
+        //   job,
+        // ]) {
+        //   formData.append(
+        //     `${i}`,
+        //     i
+        // new Blob([JSON.stringify(i)], {
+        //   type: 'application/json',
+        // })
+        //   )
+        // }
+        // formData.append('job', new Blob([JSON.stringify(job)], {
+        //   type: 'application/json'
+        // }))
+        const json = JSON.stringify(newData)
+        const blob = new Blob([json], { type: 'application/json' })
+        formData.append('data', blob)
+
+        formData.append('logo', logo)
+        formData.append('image', image)
+
+        addMutation.mutate(formData)
+        navigate('/detail')
+      } else {
+        return
+      }
     }
-
-    // for (let i of [
-    //   title,
-    //   description,
-    //   companytype,
-    //   startdate,
-    //   enddate,
-    //   recruitmentperiod,
-    //   job,
-    // ]) {
-    //   formData.append(
-    //     `${i}`,
-    //     i
-    // new Blob([JSON.stringify(i)], {
-    //   type: 'application/json',
-    // })
-    //   )
-    // }
-    // formData.append('job', new Blob([JSON.stringify(job)], {
-    //   type: 'application/json'
-    // }))
-    const json = JSON.stringify(newData)
-    const blob = new Blob([json], { type: 'application/json' })
-    formData.append('data', blob)
-
-    formData.append('logo', logo)
-    formData.append('image', image)
-
-    addMutation.mutate(formData)
   }
   // 취소 버튼 클릭시
   const cancelButton = () => {
@@ -223,6 +255,9 @@ function Write() {
                   {' '}
                   담당할 업무 : {job.jobdetail}
                 </StSpanJobdetail>
+                <StBtnDelete onClick={() => deleteJobHandler(job.jobDetail)}>
+                  삭제
+                </StBtnDelete>
               </StDivResultContent>
             )
           })}
@@ -406,6 +441,14 @@ const StSpanTpye = styled.span`
 `
 const StSpanJobdetail = styled.span`
   margin-left: 160px;
+`
+const StBtnDelete = styled.button`
+  width: 100px;
+  border: 1px solid #ff6813;
+  border-radius: 6px;
+  background-color: white;
+  margin-left: 100px;
+  cursor: pointer;
 `
 
 // 채용 공고 img

@@ -5,32 +5,45 @@ export const instance = axios.create({
   baseURL: process.env.REACT_APP_SERVER,
   headers: {
     authorization: `${getCookie('userToken')}`,
-  }
+  },
 })
+
+// 공고 페이지
+export const getRecruitAll = async () => {
+  const data = await axios.get(`${process.env.REACT_APP_SERVER}/api/recruit`)
+  return data.data
+}
 
 // 채용 공고 조회
 export const getRecruit = async (id) => {
-  const data = await instance.get(`/api/recruit/${id}`)
-  return data
+  const data = await axios.get(
+    `${process.env.REACT_APP_SERVER}/api/recruit/${id}`
+  )
+  return data.data
 }
 
 // 채용 공고 추가
 export const addIncruit = async (formData) => {
-  await instance.post(`/api/recruit`, formData, {
+  await axios.post(`${process.env.REACT_APP_SERVER}/api/recruit`, formData, {
     withCredentials: true,
     headers: {
+      authorization: `${getCookie('userToken')}`,
       'Content-Type': 'multipart/form-data',
     },
   })
 }
 //채용 공고 수정
-export const updateIncruit = async (formData, id) => {
+export const updateIncruit = async ({ formData, id }) => {
   await instance.put(`/api/recruit/${id}`, formData)
 }
 
 // 수시채용 공고 마감
 export const incruitDeadline = async (id) => {
-  await instance.put(`api/recruit/ededat/${id}`)
+  await axios.put(`${process.env.REACT_APP_SERVER}/api/recruit/endday/${id}`,{}, {
+    headers: {
+      authorization: `${getCookie('userToken')}`,
+    },
+  })
 }
 
 // 채용 공고 삭제
@@ -40,5 +53,17 @@ export const deleteIncruitapi = async (id) => {
 
 // 즐가찾기 추가
 export const favoriteIncruit = async (id) => {
-  await instance.post(`/api/favorite/${id}`)
+  await axios.post(`${process.env.REACT_APP_SERVER}/api/favorite/${id}`,{}, {
+    headers: {
+      authorization: `${getCookie('userToken')}`,
+    },
+  })
+}
+
+// 최근 공고 조회
+export const recentRecruit = async () => {
+  const data = await axios.get(
+    `${process.env.REACT_APP_SERVER}/api/recruit/recent`
+  )
+  return data
 }

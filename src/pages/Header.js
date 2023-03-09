@@ -61,8 +61,8 @@ const Header = ({ children }) => {
           <TabDivider />
           <TabCenter>
             <TabButton>
-              <MyLink to="/recruit">
-                <span>채용 공고</span>
+              <MyLink to="/detail">
+                <span>채용공고</span>
               </MyLink>
             </TabButton>
             <TabButton>
