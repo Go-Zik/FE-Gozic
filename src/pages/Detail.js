@@ -39,7 +39,7 @@ const Detail = () => {
     '30',
     '31',
   ]
-  const date = new Date().toLocaleDateString('en-us');
+  const date = new Date().toLocaleDateString('en-us')
   const [m, d, y] = date.split('/')
   const [month, setMonth] = useState(m)
 
@@ -47,6 +47,9 @@ const Detail = () => {
   const { isLoading, isError, data } = useQuery('incruit', getRecruitAll)
   if (isLoading) return <h1>로딩중</h1>
   if (isError) return <h1>에러</h1>
+
+  console.log(data)
+
   return (
     <>
       <StDivWrap>
@@ -114,7 +117,7 @@ const Detail = () => {
           })}
         </StDiv>
         <StDivWrite onClick={() => navigate('/write')}>
-          <StImgWrite src='https://d2bovrvbszerbl.cloudfront.net/assets/recruit/request_recruit-c3a4aebaf7777803190981cacf943eeaebbb7d2b7d1737893f66811243fa086a.png' />
+          <StImgWrite src="https://d2bovrvbszerbl.cloudfront.net/assets/recruit/request_recruit-c3a4aebaf7777803190981cacf943eeaebbb7d2b7d1737893f66811243fa086a.png" />
         </StDivWrite>
       </StDivWrap>
     </>
@@ -165,7 +168,7 @@ const StDivDayWrap = styled.div`
   align-items: center;
   flex-direction: column;
   width: calc(100% / 7 - 1px);
-  border: 1px solid #EEEEEE;
+  border: 1px solid #eeeeee;
   box-sizing: border-box;
 `
 const StDivDay = styled.div`

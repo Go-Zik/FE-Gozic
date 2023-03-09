@@ -33,18 +33,13 @@ function RecentRecruitComponents({ resultData }) {
     window.location.replace(`/detail/recruit/${id}`)
   }
 
-  console.log(resultData)
-
   return (
     <StDivSearchWrap>
       <StPSearch>이런 공고 찾으시나요? 🤖</StPSearch>
       <StDivSearchContain ref={slideRef}>
         {resultData.map((item, index) => {
           return (
-            <StDivSearchItem
-              key={index}
-              onClick={() => moveLink(item.id)}
-            >
+            <StDivSearchItem key={index} onClick={() => moveLink(item.id)}>
               <img
                 style={{ width: '20px', height: '30px' }}
                 src={`${item.logo}`}

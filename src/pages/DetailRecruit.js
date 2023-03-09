@@ -6,6 +6,7 @@ import {
   deleteIncruitapi,
   favoriteIncruit,
   getRecruit,
+  incruitDeadline,
   recentRecruit,
 } from '../api/detailapi'
 import RecentRecruitComponents from '../components/RecentRecruitComponents'
@@ -46,10 +47,9 @@ function DetailRecruit() {
   if (resultAll.isError) return <h1>error</h1>
 
   const resultData = resultAll.data.data
-  console.log(resultData)
 
   const nowDay = new Date()
-  const lastDate = new Date(data.lastDate)
+  const lastDate = new Date(data.lastdate)
   const diff = Math.floor(
     (lastDate.getTime() - nowDay.getTime()) / (1000 * 60 * 60 * 24)
   )
@@ -73,7 +73,7 @@ function DetailRecruit() {
           <div>
             <StDivTitle>
               <StPTitle>
-                {data.nickname}
+                {data.title}
                 {favorite === false ? (
                   <>
                     <StSpanStar onClick={clickFavorite}>
@@ -86,15 +86,17 @@ function DetailRecruit() {
                   </StSpanStar>
                 )}
               </StPTitle>
-              {/* <StBtnDeadLine onClick={deadlineRecruit}>수시 채용공고 마감</StBtnDeadLine> */}
+              <StBtnDeadLine onClick={() => incruitDeadline(param.id)}>
+                수시 채용공고 마감
+              </StBtnDeadLine>
             </StDivTitle>
             <div>
               <StPDate>
-                {data.lastDate === null ? (
-                  <> {data.startDate} ~ </>
+                {data.lastdate === null ? (
+                  <> {data.startdate} ~ </>
                 ) : (
                   <>
-                    {data.startDate} ~ {data.lastDate}
+                    {data.startdate} ~ {data.lastdate}
                     {diff > 0 ? (
                       <StSpanDDay>({diff}일 남음)</StSpanDDay>
                     ) : diff < 0 ? (
@@ -124,10 +126,10 @@ function DetailRecruit() {
               <div key={index}>
                 <StDivRecruitContent key={index}>
                   <div style={{ width: '122px' }}>
-                    <StSpanRecruitTpye>{job.incruitType}</StSpanRecruitTpye>
+                    <StSpanRecruitTpye>{job.incruittype}</StSpanRecruitTpye>
                   </div>
                   <div style={{ width: '300px' }}>
-                    <StSpanJobDetail>{job.jobDetail}</StSpanJobDetail>
+                    <StSpanJobDetail>{job.jobdetail}</StSpanJobDetail>
                   </div>
                   <div style={{ width: '135px', marginLeft: 'auto' }}>
                     <StBtnJob>자기소개서 쓰기</StBtnJob>
@@ -137,26 +139,6 @@ function DetailRecruit() {
             )
           })}
           <RecentRecruitComponents resultData={resultData} />
-
-          {/* <StDivSearchWrap>
-            <StPSearch>이런 공고 찾으시나요? 🤖</StPSearch>
-            <StDivSearchContain ref={slideRef}>
-              {resultData.map((item, index) => {
-                return (
-                  <StDivSearchItem key={index}>
-                    <img
-                      style={{ width: '20px', height: '30px' }}
-                      src={`${item.logo}`}
-                    />
-                    <p>{item.nickname}</p>
-                    <p>{item.viewcount}</p>
-                  </StDivSearchItem>
-                )
-              })}
-            </StDivSearchContain>
-            <div onClick={prevSlide}>이전</div>
-            <div onClick={nextSlide}>다음</div>
-          </StDivSearchWrap> */}
         </div>
         <StDivImg>
           <StImageImage src={`${data.image}`} />
@@ -312,41 +294,6 @@ const StBtnJob = styled.button`
     color: white;
   }
   cursor: pointer;
-`
-// 이런 공고 찾으시나요?
-const StDivSearchWrap = styled.div`
-  width: 710px;
-  height: 198px;
-  background-color: #eeeeee;
-  padding: 24px 0px 32px 12px;
-  margin-top: 20px;
-`
-const StPSearch = styled.p`
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 22px;
-  color: #555555;
-`
-const StDivSearchContain = styled.div`
-  display: inline-flex;
-  flex-wrap: nowrap;
-`
-const StDivSearchItem = styled.div`
-  width: 140px;
-  height: 108px;
-  padding: 8px 12px;
-  margin: 0px 8px 8px 10px;
-  border: 1px solid red;
-  background-color: #ffffff;
-  color: #333333;
-  border-radius: 4px;
-  border: 1px solid #dddddd;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 4%);
-  cursor: pointer;
-  :hover {
-    background-color: #fafafa;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 8%);
-  }
 `
 // img
 const StDivImg = styled.div`
