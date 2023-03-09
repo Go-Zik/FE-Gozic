@@ -33,7 +33,7 @@ const Header = ({ children, user }) => {
           <TabDivider />
           <TabCenter>
             <TabButton>
-              <MyLink to="/recruit">
+              <MyLink to="/detail">
                 <span>채용공고</span>
               </MyLink>
             </TabButton>

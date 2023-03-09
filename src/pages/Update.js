@@ -1,12 +1,12 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { addIncruit, getRecruit } from '../api/detailapi'
+import { getRecruit, updateIncruit } from '../api/detailapi'
 
 function Update() {
   const navigate = useNavigate()
-  const param = useParams();
+  const param = useParams()
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -29,12 +29,35 @@ function Update() {
   const [incruittype, setIncruittype] = useState('')
   const [jobdetail, setJobdetail] = useState('')
 
+  const { isLoading, isError, data, isSuccess } = useQuery('detail', () =>
+    getRecruit(param.id)
+  )
+  // useEffect가 undefined인지 아닌지 확인해서 undefined가 아닐 때 세팅을 다시
+  useEffect(() => {
+    if (isSuccess === true && data !== undefined) {
+      setTitle(data?.title)
+      setDescription(data?.description)
+      setStartDate(data?.startdate)
+      setEnddate(data?.lastdate)
+      // 안 될 것 같긴 함
+      // setImg(data?.image)
+      // setLogo(data?.logo)
+
+      // 생성을 할 때처럼 폼데이터로 바로 보내거나
+      // 이미지를 수정하게 되면 file 객체
+      // 이미지 string을
+
+      setJob(data?.job)
+      console.log('추가')
+    }
+  }, [isSuccess])
+
   const addJobHandler = () => {
     if (incruittype !== '' && jobdetail !== '') {
       if (window.confirm('고용 내용을 추가하시겠습니까?') === true) {
         const newJob = {
-          incruittype,
-          jobdetail,
+          incruittype: incruittype,
+          jobdetail: jobdetail,
         }
 
         setJobdetail('')
@@ -44,6 +67,14 @@ function Update() {
       }
     } else {
       alert('채용 형태와 담당할 업무를 모두 작성해주세요')
+    }
+  }
+
+  const deleteJobHandler = (v) => {
+    if (window.confirm('채용 내용을 삭제하시겠습니까?') === true) {
+      setJob(job.filter((item) => item.jobdetail !== v))
+    } else {
+      return
     }
   }
 
@@ -66,37 +97,60 @@ function Update() {
       setViewImg(reader.result)
     }
   }
-  // const {isLoading, isError, data} = useQuery('incruit', () => getRecruit(param.id))
 
   const queryClient = useQueryClient()
-  const addMutation = useMutation(addIncruit, {
+  const updateMutation = useMutation(updateIncruit, {
     onSuccess: () => {
       queryClient.invalidateQueries('recruits')
+    },
+    onError: () => {
+      alert('본인 공고만 수정할 수 있습니다.')
     },
   })
 
   // 수정 완료 버튼 클릭시
-  const updateButton = () => {
-    const formData = new FormData()
+  const updateButton = (id) => {
+    if (logo === null) {
+      alert('기업 로고 이미지를 업로드 해주세요')
+    } else if (title === '') {
+      alert('기업 명을 작성해주세요')
+    } else if (startdate === '') {
+      alert('시작 날짜를 지정해주세요')
+    } else if (companytype === '') {
+      alert('기업 형태를 지정해주세요')
+    } else if (job === []) {
+      alert('채용 형태와 담당할 업무를 추가해주세요')
+    } else if (image === null) {
+      alert('고용 이미지를 업로드 해주세요')
+    } else if (description === '') {
+      alert('공고 내용을 작성해주세요')
+    } else {
+      if (window.confirm('수정하시겠습니까?') === true) {
+        const formData = new FormData()
 
-    const newData = {
-      title,
-      description,
-      companytype,
-      startdate,
-      enddate,
-      recruitmentperiod,
-      job,
+        const newData = {
+          title,
+          description,
+          companytype,
+          startdate,
+          enddate,
+          recruitmentperiod,
+          job,
+        }
+
+        const json = JSON.stringify(newData)
+        const blob = new Blob([json], { type: 'application/json' })
+        formData.append('data', blob)
+
+        formData.append('logo', logo)
+        formData.append('image', image)
+
+        updateMutation.mutate({ formData, id })
+        navigate('/detail')
+      } else {
+        return
+      }
     }
-    
-    const json = JSON.stringify(newData)
-    const blob = new Blob([json], { type: 'application/json' })
-    formData.append('data', blob)
-
-    formData.append('logo', logo)
-    formData.append('image', image)
-
-    addMutation.mutate(formData)
   }
   // 취소 버튼 클릭시
   const cancelButton = () => {
@@ -109,7 +163,11 @@ function Update() {
       return
     }
   }
-  console.log(param.id)
+
+  if (isLoading) return <h1>로딩중</h1>
+  if (isError) return <h1>error</h1>
+
+  console.log(data)
 
   return (
     <StDivWrap>
@@ -131,7 +189,7 @@ function Update() {
               type="text"
               placeholder="기업 명을 작성해주세요"
               onChange={(e) => setTitle(e.target.value)}
-              value={title}
+              defaultValue={data.title}
             />
           </div>
           <div>
@@ -139,8 +197,9 @@ function Update() {
               <StSpanDate>채용기간 시작 날짜</StSpanDate>
               <input
                 type="date"
-                id="startDate"
+                id="startdate"
                 onChange={(e) => setStartDate(e.target.value)}
+                defaultValue={data.startdate}
               />
             </p>
 
@@ -148,8 +207,9 @@ function Update() {
               <StSpanDate>채용기간 마감 날짜</StSpanDate>
               <input
                 type="date"
-                id="endDate"
+                id="enddate"
                 onChange={(e) => setEnddate(e.target.value)}
+                defaultValue={data.lastdate}
               />
             </p>
           </div>
@@ -198,15 +258,14 @@ function Update() {
           <StBtnJob onClick={addJobHandler}>추가하기</StBtnJob>
         </StDivJob>
         <StDivJobContent>
-          {job.map((job, i) => {
+          {job?.map((job, i) => {
             return (
               <StDivResultContent key={`${job}_${i}`}>
-                {/* id값이 아닌 다른걸 사용 */}
-                <StSpanTpye>고용 형태 : {job.incruittype}</StSpanTpye>
-                <StSpanJobdetail>
-                  {' '}
-                  담당할 업무 : {job.jobdetail}
-                </StSpanJobdetail>
+                <StSpanTpye>{job.incruittype}</StSpanTpye>
+                <StSpanJobdetail>{job.jobdetail}</StSpanJobdetail>
+                <StBtnDelete onClick={() => deleteJobHandler(job.jobdetail)}>
+                  삭제
+                </StBtnDelete>
               </StDivResultContent>
             )
           })}
@@ -229,12 +288,12 @@ function Update() {
           type="text"
           name="description"
           placeholder="내용을 작성해주세요"
-          value={description}
+          defaultValue={data.description}
           onChange={(e) => setDescription(e.target.value)}
         />
       </StDivRecruitContent>
       <StDivLast>
-        <StBtnAdd onClick={updateButton}>수정 완료</StBtnAdd>
+        <StBtnAdd onClick={() => updateButton(param.id)}>수정 완료</StBtnAdd>
         <StBtnAdd onClick={cancelButton}>취소</StBtnAdd>
       </StDivLast>
     </StDivWrap>
@@ -387,9 +446,19 @@ const StDivResultContent = styled.div`
 `
 const StSpanTpye = styled.span`
   margin-left: 20px;
+  float: left;
+  width: 100px;
 `
 const StSpanJobdetail = styled.span`
-  margin-left: 160px;
+  margin-left: 100px;
+`
+const StBtnDelete = styled.button`
+  width: 100px;
+  border: 1px solid #ff6813;
+  border-radius: 6px;
+  background-color: white;
+  float: right;
+  cursor: pointer;
 `
 
 // 채용 공고 img

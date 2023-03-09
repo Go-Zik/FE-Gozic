@@ -1,26 +1,61 @@
-import React, { useState } from 'react'
-import { useQuery } from 'react-query'
+import React, { useEffect, useRef, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { deleteIncruitapi, favoriteIncruit, getRecruit } from '../api/detailapi'
+import {
+  deleteIncruitapi,
+  favoriteIncruit,
+  getRecruit,
+  incruitDeadline,
+  recentRecruit,
+} from '../api/detailapi'
+import RecentRecruitComponents from '../components/RecentRecruitComponents'
 
 function DetailRecruit() {
   const param = useParams()
   const navigate = useNavigate()
   const [favorite, setFavorite] = useState(false)
-  // const { isLoading, isError, data } = useQuery('recruit', () => getRecruit(param.id))
 
-  const deleteIncruit = (id) => {
-    if (window.confirm('게시글을 삭제하시겠습니까?' === true)) {
-      deleteIncruitapi(id)
+  const { isLoading, isError, data } = useQuery('recruit', () =>
+    getRecruit(param.id)
+  )
 
-      navigate('/')
+  const queryClient = useQueryClient()
+  const deleteMutation = useMutation(deleteIncruitapi, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('incruit')
+    },
+    onError: (error) => {
+      console.log(error)
+    },
+  })
+
+  const resultAll = useQuery('recruitAll', recentRecruit)
+
+  const deleteButton = (id) => {
+    if (window.confirm('공고를 삭제하시겠습니까?') === true) {
+      deleteMutation.mutate(id)
+      navigate('/detail')
     } else {
       return
     }
   }
+
+  if (isLoading) return <h1>로딩중</h1>
+  if (isError) return <h1>error</h1>
+  if (resultAll.isLoading === true) return <h1>로딩중</h1>
+  if (resultAll.isError) return <h1>error</h1>
+
+  const resultData = resultAll.data.data
+
+  const nowDay = new Date()
+  const lastDate = new Date(data.lastdate)
+  const diff = Math.floor(
+    (lastDate.getTime() - nowDay.getTime()) / (1000 * 60 * 60 * 24)
+  )
+
   const clickFavorite = () => {
-    // favoriteIncruit(param.id)
+    favoriteIncruit(param.id)
     setFavorite(!favorite)
   }
 
@@ -28,82 +63,95 @@ function DetailRecruit() {
     navigate(`/update/${param.id}`)
   }
 
-  // if(isLoading) return <h1>로딩중</h1>
-  // if(isError) return <h1>error</h1>
-
   return (
-    <StDivWrap>
-      <StDivContainer>
-        {' '}
-        {/* Container */}
-        <StDivLogo>LOGO IMG{/* <img /> */}</StDivLogo>
-        <div>
-          <StDivTitle>
-            <StPTitle>
-              기업 명은 여기 들어갑니다.
-              {favorite === false ? (
-                <>
-                  <StSpanStar onClick={clickFavorite}><StImgStar src='https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_unselect-0487753c5d876594f017088ec977a7f006c768bfcc975c19c4d9ebe00e322bb1.png' /></StSpanStar>
-                </>
-              ) : (
-                <StSpanStar onClick={clickFavorite}><StImgStar src='https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_select-c30fc8f4e82378168df71dcc2dc8cba105a91597fa5c771b1600636f3544d976.png'/></StSpanStar>
-              )}
-            </StPTitle>
-            <StBtnDeadLine>수시 채용공고 마감</StBtnDeadLine>
-          </StDivTitle>
+    <>
+      <StDivWrap>
+        <StDivContainer>
+          <StDivLogo>
+            <StImgLogo src={`${data.logo}`} />
+          </StDivLogo>
           <div>
-            <StPDate>2023.02.22 ~ 2023.03.01 (X일 지남)</StPDate>
+            <StDivTitle>
+              <StPTitle>
+                {data.title}
+                {favorite === false ? (
+                  <>
+                    <StSpanStar onClick={clickFavorite}>
+                      <StImgStar src="https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_unselect-0487753c5d876594f017088ec977a7f006c768bfcc975c19c4d9ebe00e322bb1.png" />
+                    </StSpanStar>
+                  </>
+                ) : (
+                  <StSpanStar onClick={clickFavorite}>
+                    <StImgStar src="https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_select-c30fc8f4e82378168df71dcc2dc8cba105a91597fa5c771b1600636f3544d976.png" />
+                  </StSpanStar>
+                )}
+              </StPTitle>
+              <StBtnDeadLine onClick={() => incruitDeadline(param.id)}>
+                수시 채용공고 마감
+              </StBtnDeadLine>
+            </StDivTitle>
+            <div>
+              <StPDate>
+                {data.lastdate === null ? (
+                  <> {data.startdate} ~ </>
+                ) : (
+                  <>
+                    {data.startdate} ~ {data.lastdate}
+                    {diff > 0 ? (
+                      <StSpanDDay>({diff}일 남음)</StSpanDDay>
+                    ) : diff < 0 ? (
+                      <StSpanDDay>({diff}일 지남)</StSpanDDay>
+                    ) : (
+                      <StSpanDDay>당일 마감</StSpanDDay>
+                    )}
+                  </>
+                )}
+              </StPDate>
+            </div>
+            <StDivLink>
+              <StBtnLink>채용 사이트</StBtnLink>
+              <StBtnLink>채용 공고 공유</StBtnLink>
+              <StBtnLink>기업 공체 전략</StBtnLink>
+            </StDivLink>
+            <StDivCount>
+              <StSpanCount>공고 조회 {data.viewcount}회 | </StSpanCount>
+              <StSpanCount>즐겨찾기 {data.favorite}회 | </StSpanCount>
+              <StSpanCount>홈페이지 방문 2회</StSpanCount>
+            </StDivCount>
           </div>
-          <StDivLink>
-            <StBtnLink>채용 사이트</StBtnLink>
-            <StBtnLink>채용 공고 공유</StBtnLink>
-            <StBtnLink>기업 공체 전략</StBtnLink>
-          </StDivLink>
-          <StDivCount>
-            <StSpanCount>공고 조회 1002회 | </StSpanCount>
-            <StSpanCount>즐겨찾기 7회 | </StSpanCount>
-            <StSpanCount>홈페이지 방문 2회</StSpanCount>
-          </StDivCount>
+        </StDivContainer>
+        <div>
+          {data.job.map((job, index) => {
+            return (
+              <div key={index}>
+                <StDivRecruitContent key={index}>
+                  <div style={{ width: '122px' }}>
+                    <StSpanRecruitTpye>{job.incruittype}</StSpanRecruitTpye>
+                  </div>
+                  <div style={{ width: '300px' }}>
+                    <StSpanJobDetail>{job.jobdetail}</StSpanJobDetail>
+                  </div>
+                  <div style={{ width: '135px', marginLeft: 'auto' }}>
+                    <StBtnJob>자기소개서 쓰기</StBtnJob>
+                  </div>
+                </StDivRecruitContent>
+              </div>
+            )
+          })}
+          <RecentRecruitComponents resultData={resultData} />
         </div>
-      </StDivContainer>
-      {/* JobContent */}
-      <div>
-        <StDivRecruitContent>
-          <div style={{ width: '122px' }}>
-            <StSpanRecruitTpye>고용 형태</StSpanRecruitTpye>
-          </div>
-          <div style={{ width: '300px' }}>
-            <StSpanJobDetail>담당할 업무</StSpanJobDetail>
-          </div>
-          <div style={{ width: '135px', marginLeft: 'auto' }}>
-            <StBtnJob>자기소개서 쓰기</StBtnJob>
-          </div>
-        </StDivRecruitContent>
-
-        <StDivSearchWrap>
-          <StPSearch>이런 공고 찾으시나요? 🤖</StPSearch>
-          {/* display로 하기 */}
-          <StDivSearchContain>
-            <StDivSearchItem>현대 자동차</StDivSearchItem>
-            <StDivSearchItem>기아</StDivSearchItem>
-            <StDivSearchItem>에이치케이이노엔</StDivSearchItem>
-            <StDivSearchItem>포스코케미칼</StDivSearchItem>
-          </StDivSearchContain>
-        </StDivSearchWrap>
-      </div>
-      <StDivImg>
-        채용 공고 이미지
-        {/* <img /> */}
-      </StDivImg>
-      <StDivIncruitContent>채용 공고 내용</StDivIncruitContent>
-      <StDivAPI>
-        <StDivAPIbutton onClick={updateHandler}> + 수정</StDivAPIbutton>
-        <StDivAPIbutton onClick={() => deleteIncruit(param.id)}>
-          {' '}
-          + 삭제
-        </StDivAPIbutton>
-      </StDivAPI>
-    </StDivWrap>
+        <StDivImg>
+          <StImageImage src={`${data.image}`} />
+        </StDivImg>
+        <StDivIncruitContent>{data.description}</StDivIncruitContent>
+        <StDivAPI>
+          <StDivAPIbutton onClick={updateHandler}> + 수정</StDivAPIbutton>
+          <StDivAPIbutton onClick={() => deleteButton(param.id)}>
+            + 삭제
+          </StDivAPIbutton>
+        </StDivAPI>
+      </StDivWrap>
+    </>
   )
 }
 export default DetailRecruit
@@ -121,6 +169,7 @@ const StDivContainer = styled.div`
   width: 680px;
   height: 170px;
   padding: 20px 25px 20px 0px;
+  margin-bottom: 30px;
   border: 1px solid #ddd;
   font-size: 16px;
 `
@@ -128,6 +177,9 @@ const StDivLogo = styled.div`
   width: 90px;
   height: 140px;
   margin: 0px 25px 0px 20px;
+`
+const StImgLogo = styled.img`
+  width: 90px;
 `
 // 기업 이름
 const StPTitle = styled.p`
@@ -176,6 +228,10 @@ const StPDate = styled.p`
   font-weight: 400;
   margin-top: 15px;
 `
+const StSpanDDay = styled.span`
+  margin-left: 30px;
+  color: #ff6813;
+`
 // 방문 사이트
 const StDivLink = styled.div`
   width: 358px;
@@ -212,7 +268,6 @@ const StSpanCount = styled.span`
 const StDivRecruitContent = styled.div`
   width: 706px;
   height: 40px;
-  margin-top: 30px;
   border: 1px solid #ddd;
   display: flex;
   align-items: center;
@@ -240,44 +295,17 @@ const StBtnJob = styled.button`
   }
   cursor: pointer;
 `
-// 이런 공고 찾으시나요?
-const StDivSearchWrap = styled.div`
-  width: 710px;
-  height: 198px;
-  background-color: #eeeeee;
-  padding: 24px 0px 32px 12px;
-  margin-top: 20px;
-`
-const StPSearch = styled.p`
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 22px;
-  color: #555555;
-`
-const StDivSearchContain = styled.div`
-  display: flex;
-  flex-wrap: nowrap;
-`
-const StDivSearchItem = styled.div`
-  width: 130px;
-  height: 108px;
-  padding: 8px 12px;
-  margin: 0px 8px 8px 10px;
-  border: 1px solid red;
-  cursor: pointer;
-`
 // img
 const StDivImg = styled.div`
   width: 710px;
-  border: 1px solid red;
-  height: 400px;
   margin-top: 20px;
+`
+const StImageImage = styled.img`
+  width: 710px;
 `
 // 채용 공고 내용
 const StDivIncruitContent = styled.div`
   width: 710px;
-  height: 400px;
-  border: 1px solid red;
   margin-top: 20px;
 `
 // 수정 삭제 부분
