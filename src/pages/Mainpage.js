@@ -1,18 +1,54 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled, { createGlobalStyle } from 'styled-components'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useNavigate } from 'react-router-dom'
+import { IoIosArrowDown } from 'react-icons/io'
+import { getMainpage } from '../api/mainpageapi'
+import Header from './Header'
+import { getUser, removeUser } from '../util/localstorage'
 
 function Mainpage() {
+  const userInfo = getUser()
+  console.log(userInfo)
+  const { isLoading, isError, data } = useQuery('main', getMainpage)
+  if (isLoading) return <h1>로딩중</h1>
+  if (isError) return <h1>에러</h1>
+  console.log(data)
+  console.log(data[0].title)
+
   return (
     <>
       <GlobalStyle />
       <Container>
         <ChatCtrl></ChatCtrl>
         <MainBanner>
-          <CopyWrapper></CopyWrapper>
+          <CopyWrapper>
+            <BannerContainer>
+              <BannerImg to={'https://www.samsungcareers.com/hr/?no=3059'} >
+                <img alt='' src='https://daoift3qrrnil.cloudfront.net/ggs/images/22710/original/%E1%84%89%E1%85%A1%E1%86%B7%E1%84%89%E1%85%A5%E1%86%BC%E1%84%87%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%A9%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%86%A8%E1%84%89%E1%85%B3_PC%E1%84%86%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%87%E1%85%A2%E1%84%82%E1%85%A5_2%29%E1%84%8E%E1%85%A2%E1%84%8B%E1%85%AD%E1%86%BC.png?1678250383'></img>
+              </BannerImg>
+            </BannerContainer>
+          </CopyWrapper>
         </MainBanner>
         <CompanySearch>
-          <SerachWrapper></SerachWrapper>
+          <SearchWrapper>
+            <SearchArea>
+              <SearchInput placeholder="채용 공고를 찾아보세요" />
+              <img
+                alt="돋보기"
+                src="https://d2bovrvbszerbl.cloudfront.net/assets/icons/magnifying-glass-2x-a328874fc9f3460c90b2d7e82f71a71f318bc62d773514543c13463dff2bd779.png"
+              />
+              <RecruitAdvertise>
+                <span>인바디 2023 상반기 수시채용</span>
+              </RecruitAdvertise>
+              <RecruitAdvertise>
+                <span>삼성에스원 3급 신입 채용</span>
+              </RecruitAdvertise>
+              <RecruitAdvertise>
+                <span>현대그룹 상반기 신입 매니저 채용</span>
+              </RecruitAdvertise>
+            </SearchArea>
+          </SearchWrapper>
         </CompanySearch>
         <CompanyRecommend>
           <RecommendWrapper>
@@ -26,411 +62,154 @@ function Mainpage() {
                   <span>자소설닷컴 추천 공고 🤖</span>
                 </GroupsAdTitle>
                 <GroupsAdItems>
-                  <AdItemsWrapper>
-                    <AdItems>
-                      <AdItemLogo></AdItemLogo>
-                      <AdItemName>하나저축은행</AdItemName>
-                      <AdItemTitle>
-                        2023 금융/일반/금융IT 채용형 인턴모집
-                      </AdItemTitle>
-                      <AdItemEndtime>3일남음</AdItemEndtime>
-                    </AdItems>
-                    <div className="color-bar"></div>
-                  </AdItemsWrapper>
-                  <AdItemsWrapper>
-                    <AdItems>
-                      <AdItemLogo></AdItemLogo>
-                      <AdItemName>하나저축은행</AdItemName>
-                      <AdItemTitle>
-                        2023 금융/일반/금융IT 채용형 인턴모집
-                      </AdItemTitle>
-                      <AdItemEndtime>3일남음</AdItemEndtime>
-                    </AdItems>
-                    <div className="color-bar"></div>
-                  </AdItemsWrapper>
-                  <AdItemsWrapper>
-                    <AdItems>
-                      <AdItemLogo></AdItemLogo>
-                      <AdItemName>하나저축은행</AdItemName>
-                      <AdItemTitle>
-                        2023 금융/일반/금융IT 채용형 인턴모집
-                      </AdItemTitle>
-                      <AdItemEndtime>3일남음</AdItemEndtime>
-                    </AdItems>
-                    <div className="color-bar"></div>
-                  </AdItemsWrapper>
-                  <AdItemsWrapper>
-                    <AdItems>
-                      <AdItemLogo></AdItemLogo>
-                      <AdItemName>하나저축은행</AdItemName>
-                      <AdItemTitle>
-                        2023 금융/일반/금융IT 채용형 인턴모집
-                      </AdItemTitle>
-                      <AdItemEndtime>3일남음</AdItemEndtime>
-                    </AdItems>
-                    <div className="color-bar"></div>
-                  </AdItemsWrapper>
+                  {data.slice(0, 4).map((el) => (
+                    <AdItemsWrapper>
+                      <AdItems>
+                        <AdItemLogo>
+                          <img alt="로고" src={el.logo} />
+                        </AdItemLogo>
+                        <AdItemName>{el.nickname}</AdItemName>
+                        <AdItemTitle>{el.jobdetail}</AdItemTitle>
+                        <AdItemEndtime>{el.viewconut}회 방문함</AdItemEndtime>
+                      </AdItems>
+                      <div className="color-bar"></div>
+                    </AdItemsWrapper>
+                  ))}
                 </GroupsAdItems>
               </GroupsAd>
               <GroupsRecommend>
                 <GrroupsRdItems>
-                  <RdTitle>
+                  <RdTitle style={{backgroundColor: '#f4f5ff'}}>
                     <span className="group-title-from">
                       현대자동차 Manufacturing_구구구구구구
                     </span>
-                    <span className="group-title-message">지원자가 많이 쓴</span>
+                    <span className="group-title-message">
+                      지원자가 많이 쓴
+                    </span>
                   </RdTitle>
                   <RdItmesWrapper>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
+                    {data.slice(0, 5).map((el) => (
+                      <RdItems>
+                        <RdItemName>{el.nickname}</RdItemName>
+                        <RdItemTitle>
+                          {el.jobdetail}
+                        </RdItemTitle>
+                        <RdItemEndtime>{el.viewconut}회 조회</RdItemEndtime>
+                        <RdItemLogo>
+                          <img src={el.logo} alt="로고" />
+                        </RdItemLogo>
+                      </RdItems>
+                    ))}
                   </RdItmesWrapper>
                 </GrroupsRdItems>
                 <GrroupsRdItems>
-                  <RdTitle>
-                    <span className="group-title-from">
-                      현대자동차 Manufacturing_구구구구구구
+                  <RdTitle style={{backgroundColor: 'rgba(193,133,255,0.08)'}}>
+                    <span className="group-title-from">웹개발</span>
+                    <span className="group-title-message">
+                      관심 지원자가 많이 쓴
                     </span>
-                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
+                    {data.slice(6, 11).map((el) => (
+                      <RdItems>
+                        <RdItemName>{el.nickname}</RdItemName>
+                        <RdItemTitle>
+                        {el.jobdetail} 
+                        </RdItemTitle>
+                        <RdItemEndtime>{el.viewconut}회 조회</RdItemEndtime>
+                        <RdItemLogo>
+                          <img src={el.logo} alt="로고" />
+                        </RdItemLogo>
+                      </RdItems>
+                    ))}
                   </RdItmesWrapper>
                 </GrroupsRdItems>
                 <GrroupsRdItems>
-                  <RdTitle>
-                    <span className="group-title-from">
-                      현대자동차 Manufacturing_구구구구구구
+                  <RdTitle style={{backgroundColor: 'rgba(63,77,94,0.08)'}}>
+                    <span className="group-title-from">서버개발</span>
+                    <span className="group-title-message">
+                      전공자가 많이 쓴
                     </span>
-                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
+                    {data.slice(12, 17).map((el) => (
+                      <RdItems>
+                        <RdItemName>{el.nickname}</RdItemName>
+                        <RdItemTitle>
+                        {el.jobdetail}
+                        </RdItemTitle>
+                        <RdItemEndtime>{el.viewconut}회 조회</RdItemEndtime>
+                        <RdItemLogo>
+                          <img src={el.logo} alt="로고" />
+                        </RdItemLogo>
+                      </RdItems>
+                    ))}
                   </RdItmesWrapper>
                 </GrroupsRdItems>
                 <GrroupsRdItems>
-                  <RdTitle>
-                    <span className="group-title-from">
-                      현대자동차 Manufacturing_구구구구구구
+                  <RdTitle style={{backgroundColor: 'rgba(48,50,99,0.08)'}}>
+                    <span className="group-title-from">3일이내</span>
+                    <span className="group-title-message">
+                      자소서가 많이 작성된
                     </span>
-                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
+                    {data.slice(18, 23).map((el) => (
+                      <RdItems>
+                        <RdItemName>{el.nickname}</RdItemName>
+                        <RdItemTitle>
+                        {el.jobdetail}
+                        </RdItemTitle>
+                        <RdItemEndtime>{el.viewconut}회 조회</RdItemEndtime>
+                        <RdItemLogo>
+                          <img src={el.logo} alt="로고" />
+                        </RdItemLogo>
+                      </RdItems>
+                    ))}
                   </RdItmesWrapper>
                 </GrroupsRdItems>
                 <GrroupsRdItems>
-                  <RdTitle>
-                    <span className="group-title-from">
-                      현대자동차 Manufacturing_구구구구구구
+                  <RdTitle style={{backgroundColor: '#F4F5FF'}}>
+                    <span className="group-title-from">꿀직장</span>
+                    <span className="group-title-message">
+                      학생이 많이 쓴
                     </span>
-                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
+                    {data.slice(24, 29).map((el) => (
+                      <RdItems>
+                        <RdItemName>{el.nickname}</RdItemName>
+                        <RdItemTitle>
+                        {el.jobdetail}
+                        </RdItemTitle>
+                        <RdItemEndtime>{el.viewconut}회 조회</RdItemEndtime>
+                        <RdItemLogo>
+                          <img src={el.logo} alt="로고" />
+                        </RdItemLogo>
+                      </RdItems>
+                    ))}
                   </RdItmesWrapper>
                 </GrroupsRdItems>
                 <GrroupsRdItems>
-                  <RdTitle>
-                    <span className="group-title-from">
-                      현대자동차 Manufacturing_구구구구구구
+                  <RdTitle style={{backgroundColor: 'rgba(193,133,255,0.08)'}}>
+                    <span className="group-title-from">딥러닝</span>
+                    <span className="group-title-message">
+                      관심 지원자가 많이 쓴
                     </span>
-                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
-                    <RdItems>
-                      <RdItemName>현대로템</RdItemName>
-                      <RdItemTitle>
-                        부문별 신입/경력사원 모집+디펜스잘하는법
-                      </RdItemTitle>
-                      <RdItemEndtime>3일남음</RdItemEndtime>
-                      <RdItemLogo>
-                        <img src="" alt="로"></img>
-                      </RdItemLogo>
-                    </RdItems>
+                    {data.slice(30, 35).map((el) => (
+                      <RdItems>
+                        <RdItemName>{el.nickname}</RdItemName>
+                        <RdItemTitle>
+                        {el.jobdetail}
+                        </RdItemTitle>
+                        <RdItemEndtime>{el.viewconut}회 조회</RdItemEndtime>
+                        <RdItemLogo>
+                          <img src={el.logo} alt="로고" />
+                        </RdItemLogo>
+                      </RdItems>
+                    ))}
                   </RdItmesWrapper>
                 </GrroupsRdItems>
               </GroupsRecommend>
@@ -598,7 +377,8 @@ function Mainpage() {
                     />
                     <div>
                       <span className="story-title">
-                        요즘면접 트렌드 총정리 (ft. 대기업 합격자들이 알려주는 면접 팁)
+                        요즘면접 트렌드 총정리 (ft. 대기업 합격자들이 알려주는
+                        면접 팁)
                       </span>
                       <span className="story-name">취진스</span>
                     </div>
@@ -612,7 +392,9 @@ function Mainpage() {
                     />
                     <div>
                       <span className="story-title">
-                      "실제상황" 대기업 인사담당자의 면접 1분 자기소개는 진짜 다를까?? 실제로 시켜보았다!! | 대기업 인담자 본인 등판! | 이대로 따라하면..나도 S기업…합격?
+                        "실제상황" 대기업 인사담당자의 면접 1분 자기소개는 진짜
+                        다를까?? 실제로 시켜보았다!! | 대기업 인담자 본인 등판!
+                        | 이대로 따라하면..나도 S기업…합격?
                       </span>
                       <span className="story-name">요즘기업_인담터뷰</span>
                     </div>
@@ -626,7 +408,8 @@ function Mainpage() {
                     />
                     <div>
                       <span className="story-title">
-                      대기업 공채, 결국 OOOO이 답이다 (fact. 대기업 홍보담당자) | 취진스 Ep.01 | 요즘면접(YZMZ)
+                        대기업 공채, 결국 OOOO이 답이다 (fact. 대기업
+                        홍보담당자) | 취진스 Ep.01 | 요즘면접(YZMZ)
                       </span>
                       <span className="story-name">취진스</span>
                     </div>
@@ -640,7 +423,8 @@ function Mainpage() {
                     />
                     <div>
                       <span className="story-title">
-                      서울대 졸업하고 세상을 바꾸겠다는 이 청년, 10년 후 지금 뭐하고 있을까?
+                        서울대 졸업하고 세상을 바꾸겠다는 이 청년, 10년 후 지금
+                        뭐하고 있을까?
                       </span>
                       <span className="story-name">요즘CEO</span>
                     </div>
@@ -650,7 +434,149 @@ function Mainpage() {
             </StoryBody>
           </CompanyStoryContainer>
         </CompanyStory>
-        
+        <LineBanner>
+          <BannerLink
+            to={
+              'https://tally.so/r/nW2EkN?utm_source=jasoseol&utm_medium=hl_banner'
+            }
+          >
+            <img
+              alt="배너이미지"
+              src="https://daoift3qrrnil.cloudfront.net/ggs/images/25082/original/PC_%E1%84%92%E1%85%A9%E1%86%B7%E1%84%84%E1%85%B5%281200_100%29.png?1678078816"
+            ></img>
+          </BannerLink>
+        </LineBanner>
+        <SectionTop>
+          <SectionContainer>
+            <SectionTitle>직무별 인기 공고</SectionTitle>
+          </SectionContainer>
+        </SectionTop>
+        <SectionTop>
+          <SectionContainer>
+            <SectionTitle>최근 게시된 인기 공고 TOP 24</SectionTitle>
+          </SectionContainer>
+        </SectionTop>
+        <SectionTop>
+          <SectionContainer>
+            <SectionTitle>곧 마감하는 인기 공고 TOP 24</SectionTitle>
+          </SectionContainer>
+        </SectionTop>
+        <ChatSection>
+          <ChatSectionTitle>
+            <div>불타오르는 채팅방</div>
+            <img
+              alt="불꽃"
+              src="https://d2bovrvbszerbl.cloudfront.net/assets/index/famous-chat-icon-57650baf83ebd71aaf452175a70ca47e4f04246b0de20c305b64bfbc6a85f085.png"
+            />
+          </ChatSectionTitle>
+          <ChatSectionBody>
+            <ChatMain></ChatMain>
+            <ChatSub></ChatSub>
+          </ChatSectionBody>
+        </ChatSection>
+        <DatalabSection>
+          <ChatSectionTitle>
+            <div>실시간 지원자 정보 분석, 데이터랩</div>
+            <img
+              alt="데이터"
+              src="https://d2bovrvbszerbl.cloudfront.net/assets/index/datalab_icon-22d23b2f6ad031bb54017ff2f8704e5ff5c472a90d76f29580e70f0b8957ee9a.png"
+            />
+          </ChatSectionTitle>
+          <DataSectionBody>
+            <DataMain></DataMain>
+            <DataSub></DataSub>
+          </DataSectionBody>
+        </DatalabSection>
+        <FooterSection>
+          <FooterContainer>
+            <InformationContainer>
+              <div>
+                <span>
+                  주식회사 앵커리어
+                  <IoIosArrowDown className="material-icons" />
+                </span>
+              </div>
+            </InformationContainer>
+            <ServicesContainer>
+              <AnchoreerWrapper>
+                <AnchoreerTitle>자소설닷컴</AnchoreerTitle>
+                <AnchoreerCategoty>
+                  <AnchoreerService>
+                    <AnchorerrLink to={'/'}>공지사항</AnchorerrLink>
+                  </AnchoreerService>
+                  <AnchoreerService>
+                    <AnchorerrLink to={'/'}>공고등록요청</AnchorerrLink>
+                  </AnchoreerService>
+                  <AnchoreerService>
+                    <AnchorerrLink to={'/'}>자소서블로그</AnchorerrLink>
+                  </AnchoreerService>
+                </AnchoreerCategoty>
+              </AnchoreerWrapper>
+              <AnchoreerWrapper>
+                <AnchoreerTitle>기업서비스</AnchoreerTitle>
+                <AnchoreerCategoty>
+                  <AnchoreerService>
+                    <AnchorerrLink to={'/'}>채용공고등록</AnchorerrLink>
+                  </AnchoreerService>
+                  <AnchoreerService>
+                    <AnchorerrLink to={'/'}>광고예약</AnchorerrLink>
+                  </AnchoreerService>
+                  <AnchoreerService>
+                    <AnchorerrLink to={'/'}>광고/제휴</AnchorerrLink>
+                  </AnchoreerService>
+                </AnchoreerCategoty>
+              </AnchoreerWrapper>
+            </ServicesContainer>
+            <hr />
+            <AdditionalContainer>
+              <TermsWrapper>
+                <div>
+                  <TermsLink to={'/'}>인재채용</TermsLink>
+                </div>
+                <div>
+                  <TermsLink to={'/'}>이용약관</TermsLink>
+                </div>
+                <div>
+                  <TermsLink to={'/'}>개인정보처리방침</TermsLink>
+                </div>
+                <div>
+                  <TermsLink to={'/'}>커뮤니티운영정책</TermsLink>
+                </div>
+                <div>
+                  <TermsLink to={'/'}>FAQ</TermsLink>
+                </div>
+                <div>
+                  <TermsLink to={'/'}>문의</TermsLink>
+                </div>
+                <div>
+                  <TermsLink to={'/'}>© Anchoreer</TermsLink>
+                </div>
+              </TermsWrapper>
+              <AppStoreWrapper>
+                <GoogleLink
+                  to={
+                    'https://play.google.com/store/apps/details?id=com.anchoreer.jasoseol&referrer=utm_source%3D2003chatlanding'
+                  }
+                >
+                  <img
+                    alt="앱이미지"
+                    src="https://d2bovrvbszerbl.cloudfront.net/assets/index/download-google-play-2x-44dea8fd6d223a0df9a032057fe9f9e2cef8fd0bf2a76740322b199e476dbb5e.png"
+                  ></img>
+                </GoogleLink>
+                <AppStoreLink
+                  to={
+                    'https://apps.apple.com/app/apple-store/id1082085895?pt=15600800&ct=2003chatlanding&mt=8'
+                  }
+                >
+                  <img
+                    alt="앱이미지"
+                    src="https://d2bovrvbszerbl.cloudfront.net/assets/index/download-app-store-2x-a1bc87c1d30268a66c8222e5764cce730101156a21d8fa0b228abd40db138424.png"
+                  ></img>
+                </AppStoreLink>
+              </AppStoreWrapper>
+            </AdditionalContainer>
+          </FooterContainer>
+        </FooterSection>
       </Container>
     </>
   )
@@ -690,7 +616,6 @@ const MainBanner = styled.div`
   width: 1200px;
   height: 280px;
   margin: 24px auto 0;
-  background: gainsboro;
   border-radius: 12px;
   filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.08));
 `
@@ -699,6 +624,39 @@ const CopyWrapper = styled.div`
   text-align: center;
   padding-top: 120px;
 `
+const BannerContainer =styled.div`
+position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    z-index: 1;
+    transition: opacity 1.5s;
+`
+const BannerImg = styled(Link)`
+    display: inline-block;
+    width: 100%;
+    height: 280px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 12px;
+    border: 1px solid #EEEEEE;
+`
+
+// const BannerController = styled.div`
+// position: absolute;
+//     bottom: 16px;
+//     right: 16px;
+//     width: 124px;
+//     display: flex;
+//     z-index: 1000;
+//     background: #FFFFFF;
+//     border: 1px solid #EEEEEE;
+//     border-radius: 20px;
+//     user-select: none;
+// `
 
 const CompanySearch = styled.div`
   position: relative;
@@ -706,16 +664,62 @@ const CompanySearch = styled.div`
   min-width: 1200px;
 `
 
-const SerachWrapper = styled.div`
+const SearchWrapper = styled.div`
   display: flex;
   width: 1200px;
   height: 80px;
   margin: 16px auto 60px;
   border-bottom: 2px solid #333333;
   cursor: text;
-  background: gainsboro;
 `
 
+const SearchArea = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  & > img {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+  }
+`
+const SearchInput = styled.input`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 20px 810px 20px 42px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  outline: none;
+
+  &::placeholder {
+    color: #bbb;
+  }
+`
+const RecruitAdvertise = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 260px;
+  height: 44px;
+  margin: 0 5px;
+  background: #fafafa;
+  padding: 0 10px;
+  border: 1px solid #eeeeee;
+  border-radius: 5px;
+  color: #777777;
+  cursor: pointer;
+`
 const CompanyRecommend = styled.div`
   padding: 0 0 60px;
   overflow: hidden;
@@ -826,8 +830,12 @@ const AdItemLogo = styled.div`
   width: 112px;
   height: 84px;
   margin-bottom: 4px;
-  background-color: gray;
   border-radius: 8px;
+
+  & > img {
+    max-width: 112px;
+    max-height: 84px;
+  }
 `
 const AdItemName = styled.div`
   font-weight: 600;
@@ -882,7 +890,6 @@ const RdTitle = styled.div`
   height: 76px;
   padding: 16px 20px;
   border-radius: 12px 12px 0px 0px;
-  background-color: #f4f5ff;
 
   & > span {
     color: #777777;
@@ -1262,5 +1269,218 @@ const StoryListLink = styled(Link)`
     font-size: 14px;
     color: #999;
     text-align: right;
+  }
+`
+
+const LineBanner = styled.div`
+  width: 1200px;
+  margin: 0 auto 40px;
+  cursor: pointer;
+  position: relative;
+  min-width: 1200px;
+  overflow: hidden;
+`
+
+const BannerLink = styled(Link)``
+
+const SectionTop = styled.div`
+  position: relative;
+  width: 100%;
+  min-width: 1200px;
+  overflow: hidden;
+  background: #fafafa;
+`
+
+const SectionContainer = styled.div`
+  width: 1200px;
+  height: 356px;
+  margin: 80px auto 40px;
+`
+
+const SectionTitle = styled.div`
+  margin-bottom: 30px;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.5;
+`
+
+const ChatSectionTitle = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  font-size: 26px;
+  font-weight: bold;
+
+  & > img {
+    width: 26px;
+    height: 26px;
+  }
+`
+
+const ChatSection = styled.div`
+  width: 1200px;
+  margin: 80px auto;
+  position: relative;
+  min-width: 1200px;
+  overflow: hidden;
+`
+
+const ChatSectionBody = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+`
+const ChatMain = styled.div`
+  display: flex;
+  width: 75%;
+`
+const ChatSub = styled.div`
+  width: 23%;
+  height: 300px;
+  overflow: hidden;
+`
+
+const DatalabSection = styled.div`
+  width: 1200px;
+  margin: 80px auto;
+  position: relative;
+  min-width: 1200px;
+  overflow: hidden;
+`
+const DataSectionBody = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+const DataMain = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 74.5%;
+`
+const DataSub = styled.div`
+  width: 23%;
+  height: 156px;
+  overflow: hidden;
+`
+
+const FooterSection = styled.div`
+  background: #fafafa;
+  border-top: 1px solid #eeeeee;
+  position: relative;
+  width: 100%;
+  min-width: 1200px;
+  overflow: hidden;
+`
+
+const FooterContainer = styled.div`
+  width: 1200px;
+  min-height: 320px;
+  margin: 0 auto;
+  padding: 40px 0 70px;
+  overflow: hidden;
+
+  & > hr {
+    margin: 40px 0 15px;
+    border: 0;
+    border-top: 1px solid #eeeeee;
+  }
+`
+
+const InformationContainer = styled.div`
+  margin-bottom: 30px;
+
+  & > div > span {
+    display: inline-flex;
+    align-items: center;
+    color: #555555;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    cursor: pointer;
+    & .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+    }
+  }
+`
+
+const ServicesContainer = styled.div`
+  margin-bottom: 40px;
+`
+
+const AnchoreerWrapper = styled.div`
+  display: flex;
+  margin-bottom: 12px;
+`
+const AnchoreerTitle = styled.div`
+  margin-right: 38px;
+  color: #555555;
+  font-weight: bold;
+`
+const AnchoreerCategoty = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0 -10px 0;
+`
+
+const AnchoreerService = styled.div`
+  margin: 0 10px;
+  cursor: pointer;
+`
+const AnchorerrLink = styled(Link)`
+  color: #555555;
+  text-decoration: none;
+`
+
+const AdditionalContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const TermsWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin: -12px;
+  & > div {
+    margin: 12px;
+  }
+
+  & > div:nth-child(3) {
+    font-weight: 900;
+  }
+  & > div:last-child {
+    font-weight: 900;
+  }
+`
+const TermsLink = styled(Link)`
+  color: #555555;
+  text-decoration: none;
+`
+
+const AppStoreWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`
+const GoogleLink = styled(Link)`
+  text-decoration: none;
+  & > img {
+    width: 130px;
+    height: 50px;
+  }
+`
+
+const AppStoreLink = styled(Link)`
+  text-decoration: none;
+  & > img {
+    width: 114px;
+    height: 34px;
   }
 `

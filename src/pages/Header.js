@@ -46,6 +46,10 @@ const Header = ({ children }) => {
     return
   }
 
+  const mantion = () => {
+    alert('미구현입니다 ㅠㅠ')
+  }
+
   return (
     <HeaderContainer>
       <IndexHeader>
@@ -106,7 +110,7 @@ const Header = ({ children }) => {
             <TabIcon>
               <IconImage src={ic_notification}></IconImage>
             </TabIcon>
-            <TabIcon onClick={logoutHandler}>
+            <TabIcon onClick={mantion}>
               <IconImage src={ic_chat}></IconImage>
             </TabIcon>
           </IndexRight>
