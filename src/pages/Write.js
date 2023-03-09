@@ -445,6 +445,7 @@ const StBtnDelete = styled.button`
   border-radius: 6px;
   background-color: white;
   margin-left: 100px;
+  float: right;
   cursor: pointer;
 `
 
