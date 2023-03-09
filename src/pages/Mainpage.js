@@ -23,7 +23,7 @@ function Mainpage() {
             <RecommendGroups>
               <GroupsAd>
                 <GroupsAdTitle>
-                  <sapn>자소설닷컴 추천 공고 🤖</sapn>
+                  <span>자소설닷컴 추천 공고 🤖</span>
                 </GroupsAdTitle>
                 <GroupsAdItems>
                   <AdItemsWrapper>
@@ -35,7 +35,7 @@ function Mainpage() {
                       </AdItemTitle>
                       <AdItemEndtime>3일남음</AdItemEndtime>
                     </AdItems>
-                    <div class="color-bar"></div>
+                    <div className="color-bar"></div>
                   </AdItemsWrapper>
                   <AdItemsWrapper>
                     <AdItems>
@@ -46,7 +46,7 @@ function Mainpage() {
                       </AdItemTitle>
                       <AdItemEndtime>3일남음</AdItemEndtime>
                     </AdItems>
-                    <div class="color-bar"></div>
+                    <div className="color-bar"></div>
                   </AdItemsWrapper>
                   <AdItemsWrapper>
                     <AdItems>
@@ -57,7 +57,7 @@ function Mainpage() {
                       </AdItemTitle>
                       <AdItemEndtime>3일남음</AdItemEndtime>
                     </AdItems>
-                    <div class="color-bar"></div>
+                    <div className="color-bar"></div>
                   </AdItemsWrapper>
                   <AdItemsWrapper>
                     <AdItems>
@@ -68,17 +68,17 @@ function Mainpage() {
                       </AdItemTitle>
                       <AdItemEndtime>3일남음</AdItemEndtime>
                     </AdItems>
-                    <div class="color-bar"></div>
+                    <div className="color-bar"></div>
                   </AdItemsWrapper>
                 </GroupsAdItems>
               </GroupsAd>
               <GroupsRecommend>
                 <GrroupsRdItems>
                   <RdTitle>
-                    <span class="group-title-from">
+                    <span className="group-title-from">
                       현대자동차 Manufacturing_구구구구구구
                     </span>
-                    <span class="group-title-message">지원자가 많이 쓴</span>
+                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
                     <RdItems>
@@ -135,10 +135,10 @@ function Mainpage() {
                 </GrroupsRdItems>
                 <GrroupsRdItems>
                   <RdTitle>
-                    <span class="group-title-from">
+                    <span className="group-title-from">
                       현대자동차 Manufacturing_구구구구구구
                     </span>
-                    <span class="group-title-message">지원자가 많이 쓴</span>
+                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
                     <RdItems>
@@ -195,10 +195,10 @@ function Mainpage() {
                 </GrroupsRdItems>
                 <GrroupsRdItems>
                   <RdTitle>
-                    <span class="group-title-from">
+                    <span className="group-title-from">
                       현대자동차 Manufacturing_구구구구구구
                     </span>
-                    <span class="group-title-message">지원자가 많이 쓴</span>
+                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
                     <RdItems>
@@ -255,10 +255,10 @@ function Mainpage() {
                 </GrroupsRdItems>
                 <GrroupsRdItems>
                   <RdTitle>
-                    <span class="group-title-from">
+                    <span className="group-title-from">
                       현대자동차 Manufacturing_구구구구구구
                     </span>
-                    <span class="group-title-message">지원자가 많이 쓴</span>
+                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
                     <RdItems>
@@ -315,10 +315,10 @@ function Mainpage() {
                 </GrroupsRdItems>
                 <GrroupsRdItems>
                   <RdTitle>
-                    <span class="group-title-from">
+                    <span className="group-title-from">
                       현대자동차 Manufacturing_구구구구구구
                     </span>
-                    <span class="group-title-message">지원자가 많이 쓴</span>
+                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
                     <RdItems>
@@ -375,10 +375,10 @@ function Mainpage() {
                 </GrroupsRdItems>
                 <GrroupsRdItems>
                   <RdTitle>
-                    <span class="group-title-from">
+                    <span className="group-title-from">
                       현대자동차 Manufacturing_구구구구구구
                     </span>
-                    <span class="group-title-message">지원자가 많이 쓴</span>
+                    <span className="group-title-message">지원자가 많이 쓴</span>
                   </RdTitle>
                   <RdItmesWrapper>
                     <RdItems>
@@ -436,7 +436,7 @@ function Mainpage() {
               </GroupsRecommend>
             </RecommendGroups>
             <img
-              class="groups-controller right ng-scope"
+              className="groups-controller right ng-scope"
               alt="화살표"
               src="https://d2bovrvbszerbl.cloudfront.net/assets/index/right-arrow-in-circle-9a4174c39bd603184c9b2fcca76b9781ad279b367b09e65f8c2aa8ccc2da04b7.png"
             ></img>
@@ -582,11 +582,11 @@ function Mainpage() {
                       src="https://jasoseol.com/images/icons/article-icon-2x.png"
                     />
                     <div>
-                      <span class="story-title">
+                      <span className="story-title">
                         [Eng] 대기업 영어 면접 1분 자기소개 모범답안
                         #영어1분자기소개
                       </span>
-                      <span class="story-name">취진스</span>
+                      <span className="story-name">취진스</span>
                     </div>
                   </StoryListLink>
                 </StoryList>
@@ -597,10 +597,10 @@ function Mainpage() {
                       src="https://jasoseol.com/images/icons/article-icon-2x.png"
                     />
                     <div>
-                      <span class="story-title">
+                      <span className="story-title">
                         요즘면접 트렌드 총정리 (ft. 대기업 합격자들이 알려주는 면접 팁)
                       </span>
-                      <span class="story-name">취진스</span>
+                      <span className="story-name">취진스</span>
                     </div>
                   </StoryListLink>
                 </StoryList>
@@ -611,10 +611,10 @@ function Mainpage() {
                       src="https://jasoseol.com/images/icons/article-icon-2x.png"
                     />
                     <div>
-                      <span class="story-title">
+                      <span className="story-title">
                       "실제상황" 대기업 인사담당자의 면접 1분 자기소개는 진짜 다를까?? 실제로 시켜보았다!! | 대기업 인담자 본인 등판! | 이대로 따라하면..나도 S기업…합격?
                       </span>
-                      <span class="story-name">요즘기업_인담터뷰</span>
+                      <span className="story-name">요즘기업_인담터뷰</span>
                     </div>
                   </StoryListLink>
                 </StoryList>
@@ -625,10 +625,10 @@ function Mainpage() {
                       src="https://jasoseol.com/images/icons/article-icon-2x.png"
                     />
                     <div>
-                      <span class="story-title">
+                      <span className="story-title">
                       대기업 공채, 결국 OOOO이 답이다 (fact. 대기업 홍보담당자) | 취진스 Ep.01 | 요즘면접(YZMZ)
                       </span>
-                      <span class="story-name">취진스</span>
+                      <span className="story-name">취진스</span>
                     </div>
                   </StoryListLink>
                 </StoryList>
@@ -639,10 +639,10 @@ function Mainpage() {
                       src="https://jasoseol.com/images/icons/article-icon-2x.png"
                     />
                     <div>
-                      <span class="story-title">
+                      <span className="story-title">
                       서울대 졸업하고 세상을 바꾸겠다는 이 청년, 10년 후 지금 뭐하고 있을까?
                       </span>
-                      <span class="story-name">요즘CEO</span>
+                      <span className="story-name">요즘CEO</span>
                     </div>
                   </StoryListLink>
                 </StoryList>
