@@ -167,8 +167,6 @@ function Update() {
   if (isLoading) return <h1>로딩중</h1>
   if (isError) return <h1>error</h1>
 
-  console.log(data)
-
   return (
     <StDivWrap>
       <StDivContainer>

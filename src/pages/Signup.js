@@ -1,60 +1,60 @@
-import React, { useCallback, useState } from 'react';
-import styled from 'styled-components';
-import axios from 'axios';
-import { useNavigate } from 'react-router';
+import React, { useCallback, useState } from 'react'
+import styled from 'styled-components'
+import axios from 'axios'
+import { useNavigate } from 'react-router'
 
 function Signup() {
-  const [regist , setRegist] = useState({
+  const [regist, setRegist] = useState({
     email: '',
     password: '',
-    role:'',
-    nickName:''
-  });
+    role: '',
+    nickName: '',
+  })
   const [passwordCheck, setPasswordCheck] = useState('')
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const SignupHandler = async() => {
+  const SignupHandler = async () => {
+    try {
+      const body = {
+        email: regist.email,
+        password: regist.password,
+        role: regist.role,
+        nickName: regist.nickName,
+      }
+      console.log(body)
 
-    try{
-    const body = {
-      email: regist.email,
-      password: regist.password,
-      role: regist.role,
-      nickName: regist.nickName,
-    }
-    console.log(body)
-
-    const response = await axios.post(
-      `${process.env.REACT_APP_SERVER}/api/user/join`, 
-      body, 
-      { withCredentials: true }
-    );
-    console.log(response);
-    alert('회원가입 성공!');
-    navigate('/');
-    
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER}/api/user/join`,
+        body,
+        { withCredentials: true }
+      )
+      console.log(response)
+      alert('회원가입 성공!')
+      navigate('/')
     } catch (error) {
       console.log(error)
-      alert('회원가입 실패!');
+      alert('회원가입 실패!')
     }
-  };
-
+  }
 
   const changeHandler = (e) => {
     const { name, value } = e.target
     setRegist((prev) => ({ ...prev, [name]: value }))
-    
-  };
+  }
+  const typeChangeHandler = (e) => {
+    const { name, value } = e.target
+    setRegist((prev) => ({ ...prev, [name]: value }))
+  }
 
+  console.log('regist', regist)
 
   return (
     <Div>
       <h1>회원가입</h1>
       <Item>
-
         <ItemBox>
           이메일
-          <br/>
+          <br />
           <Inputform
             type="text"
             name="email"
@@ -62,12 +62,11 @@ function Signup() {
             value={regist.email}
             onChange={changeHandler}
           />
-          <Button >중복확인</Button>
         </ItemBox>
 
         <ItemBox>
-        비밀번호
-          <br/>
+          비밀번호
+          <br />
           <Inputform
             type="password"
             name="password"
@@ -75,12 +74,11 @@ function Signup() {
             value={regist.password}
             onChange={changeHandler}
           />
-          <Button >중복확인</Button>
         </ItemBox>
 
         <ItemBox>
-        비밀번호 확인
-          <br/>
+          비밀번호 확인
+          <br />
           <Inputform
             type="password"
             name="passwordCheck"
@@ -91,20 +89,31 @@ function Signup() {
         </ItemBox>
 
         <ItemBox>
-        기업회원이라면 체크
-          <br/>
-          <Inputform
-            type="text"
-            name="role"
-            placeholder="기업회원이신가요?"
-            value={regist.role}
-            onChange={changeHandler}
-          />
+          기업회원이라면 체크
+          <br />
+          <form>
+            <input
+              type="radio"
+              id="COMPANY"
+              name='role'
+              value='COMPANY'
+              onChange={typeChangeHandler}
+            />
+            <label htmlFor="COMPANY">COMPANY</label>
+            <input
+              type="radio"
+              id="MEMBER"
+              name='role'
+              value='MEMBER'
+              onChange={typeChangeHandler}
+            />
+            <label htmlFor="MEMBER">MEMBER</label>
+          </form>
         </ItemBox>
 
         <ItemBox>
-        회사 닉네임
-          <br/>
+          회사 닉네임
+          <br />
           <Inputform
             type="text"
             name="nickName"
@@ -119,18 +128,17 @@ function Signup() {
         </div>
       </Item>
     </Div>
-  );
+  )
 }
 
 export default Signup
-
 
 const Div = styled.div`
   height: 50px;
   padding: 5px;
   text-align: center;
   margin: 50px;
-`;
+`
 
 const Inputform = styled.input`
   height: 20px;
@@ -140,16 +148,16 @@ const Inputform = styled.input`
   text-align: center;
   border: none;
   border-bottom: 1px solid black;
-`;
+`
 
 const Button = styled.button`
   color: black;
   padding: 10px;
-  border: 1px solid #FED2BA;
+  border: 1px solid #fed2ba;
   border-radius: 10px;
-  background-color: #FFF6F0;
-  color: #FF6813;
-`;
+  background-color: #fff6f0;
+  color: #ff6813;
+`
 
 const Item = styled.div`
   width: 500px;
@@ -158,10 +166,11 @@ const Item = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-`;
+`
 
 const ItemBox = styled.div`
+width: 400px;
   margin: auto;
   margin-top: 30px;
-  border: 1px solid #FED2BA;
-`;
+  border: 1px solid #fed2ba;
+`
