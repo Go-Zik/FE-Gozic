@@ -11,7 +11,7 @@ function Login() {
     password: '',
   })
   const navigate = useNavigate()
-  const [cookies, setCookies] = useCookies(['userToken'])
+  const [cookies, setCookies] = useCookies(['accessToken'])
 
   const loginHandler = async () => {
     try {
@@ -22,16 +22,14 @@ function Login() {
       const jwtToken = response.headers.authorization;
       let token = jwtToken.split(' ')[1]
 
-      setCookies('userToken', jwtToken) // 쿠키에 토큰 저장
-      const decodedUserInfo = jwtDecode(token, {header: true}) // 토큰 decode
-      console.log(decodedUserInfo);
+      setCookies('accessToken', jwtToken) // 쿠키에 토큰 저장
+      const decodedUserInfo = jwtDecode(token) // 토큰 decode
       localStorage.setItem('userInfo', JSON.stringify(decodedUserInfo)) //토큰에 저장되어있는 userInfo 저장
       alert('로그인완료')
       navigate('/')
       return response 
     } catch (error) {
       console.log("error: " + JSON.stringify(localStorage))
-      console.log(error)
       alert('로그인 실패')
     }
   }
