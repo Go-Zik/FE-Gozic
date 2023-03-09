@@ -4,7 +4,7 @@ import { getCookie } from '../util/cookie'
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_SERVER,
   headers: {
-    authorization: `${getCookie('userToken')}`,
+    authorization: `${getCookie('accessToken')}`,
   },
 })
 
@@ -27,7 +27,7 @@ export const addIncruit = async (formData) => {
   await axios.post(`${process.env.REACT_APP_SERVER}/api/recruit`, formData, {
     withCredentials: true,
     headers: {
-      authorization: `${getCookie('userToken')}`,
+      authorization: `${getCookie('accessToken')}`,
       'Content-Type': 'multipart/form-data',
     },
   })
@@ -41,7 +41,7 @@ export const updateIncruit = async ({ formData, id }) => {
 export const incruitDeadline = async (id) => {
   await axios.put(`${process.env.REACT_APP_SERVER}/api/recruit/endday/${id}`,{}, {
     headers: {
-      authorization: `${getCookie('userToken')}`,
+      authorization: `${getCookie('accessToken')}`,
     },
   })
 }
@@ -55,7 +55,7 @@ export const deleteIncruitapi = async (id) => {
 export const favoriteIncruit = async (id) => {
   await axios.post(`${process.env.REACT_APP_SERVER}/api/favorite/${id}`,{}, {
     headers: {
-      authorization: `${getCookie('userToken')}`,
+      authorization: `${getCookie('accessToken')}`,
     },
   })
 }
