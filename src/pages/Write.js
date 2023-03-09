@@ -250,11 +250,8 @@ function Write() {
             return (
               <StDivResultContent key={`${job}_${i}`}>
                 {/* id값이 아닌 다른걸 사용 */}
-                <StSpanTpye>고용 형태 : {job.incruittype}</StSpanTpye>
-                <StSpanJobdetail>
-                  {' '}
-                  담당할 업무 : {job.jobdetail}
-                </StSpanJobdetail>
+                <StSpanTpye>{job.incruittype}</StSpanTpye>
+                <StSpanJobdetail> {job.jobdetail}</StSpanJobdetail>
                 <StBtnDelete onClick={() => deleteJobHandler(job.jobDetail)}>
                   삭제
                 </StBtnDelete>
@@ -448,6 +445,7 @@ const StBtnDelete = styled.button`
   border-radius: 6px;
   background-color: white;
   margin-left: 100px;
+  float: right;
   cursor: pointer;
 `
 

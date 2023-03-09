@@ -108,7 +108,7 @@ const DropdownMenu = styled.ul`
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
-  box-shadow: & > .li {
+  box-shadow: & > li {
     display: list-item;
   }
 `

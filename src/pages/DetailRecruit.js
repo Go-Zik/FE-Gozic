@@ -26,7 +26,7 @@ function DetailRecruit() {
       queryClient.invalidateQueries('incruit')
     },
     onError: (error) => {
-      console.log(error)
+      alert('본인 채용 공고만 삭제가 가능합니다')
     },
   })
 
@@ -53,6 +53,8 @@ function DetailRecruit() {
   const diff = Math.floor(
     (lastDate.getTime() - nowDay.getTime()) / (1000 * 60 * 60 * 24)
   )
+  const absDiff = Math.abs(diff)
+  console.log(absDiff)
 
   const clickFavorite = () => {
     favoriteIncruit(param.id)
@@ -62,6 +64,8 @@ function DetailRecruit() {
   const updateHandler = () => {
     navigate(`/update/${param.id}`)
   }
+
+  console.log(data)
 
   return (
     <>
@@ -74,7 +78,7 @@ function DetailRecruit() {
             <StDivTitle>
               <StPTitle>
                 {data.title}
-                {favorite === false ? (
+                {data.hasfav === favorite ? (
                   <>
                     <StSpanStar onClick={clickFavorite}>
                       <StImgStar src="https://d2bovrvbszerbl.cloudfront.net/assets/main/calendar/star_unselect-0487753c5d876594f017088ec977a7f006c768bfcc975c19c4d9ebe00e322bb1.png" />
@@ -100,7 +104,7 @@ function DetailRecruit() {
                     {diff > 0 ? (
                       <StSpanDDay>({diff}일 남음)</StSpanDDay>
                     ) : diff < 0 ? (
-                      <StSpanDDay>({diff}일 지남)</StSpanDDay>
+                      <StSpanDDay>({absDiff}일 지남)</StSpanDDay>
                     ) : (
                       <StSpanDDay>당일 마감</StSpanDDay>
                     )}
@@ -109,9 +113,19 @@ function DetailRecruit() {
               </StPDate>
             </div>
             <StDivLink>
-              <StBtnLink>채용 사이트</StBtnLink>
-              <StBtnLink>채용 공고 공유</StBtnLink>
-              <StBtnLink>기업 공체 전략</StBtnLink>
+              <StBtnLink>
+                <StALink href="https://www.jobkorea.co.kr/?utm_source=google&utm_medium=cpc&utm_campaign=PC_%EB%B8%8C%EB%9E%9C%EB%93%9C&utm_content=PC_%EB%B8%8C%EB%9E%9C%EB%93%9C&utm_term=%EC%9E%A1%EC%BD%94%EB%A6%AC%EC%95%84&cmpid=sa_google&gclid=Cj0KCQiApKagBhC1ARIsAFc7Mc7tUQMxo79Cw8cYWZMjiBC7fjTsx7nRIHaUv-BllgkY2J0o93kd2x8aAhnAEALw_wcB">
+                  채용 사이트
+                </StALink>
+              </StBtnLink>
+              <StBtnLink>
+                <StALink href="https://www.saramin.co.kr/zf_user/">
+                  채용 공고 공유
+                </StALink>
+              </StBtnLink>
+              <StBtnLink>
+                <StALink href="https://jasoseol.com/">기업 공체 전략</StALink>
+              </StBtnLink>
             </StDivLink>
             <StDivCount>
               <StSpanCount>공고 조회 {data.viewcount}회 | </StSpanCount>
@@ -254,6 +268,10 @@ const StBtnLink = styled.button`
     background-color: #eeeeee;
   }
   cursor: pointer;
+`
+const StALink = styled.a`
+  color: #777777;
+  text-decoration: none;
 `
 // 조회 Count
 const StDivCount = styled.div`
