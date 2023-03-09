@@ -11,6 +11,8 @@
     "react": "^18.2.0",
     "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
+    "react-modal": "^3.16.1",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.8.2",
     "react-scripts": "5.0.1",
@@ -20,7 +22,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "aws s3 sync ./build s3://gozic --profile=gozic"
   },
   "eslintConfig": {
     "extends": [

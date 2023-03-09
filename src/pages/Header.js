@@ -1,12 +1,40 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import '../index.css'
 import { getUser, removeUser } from '../util/localstorage'
+import LoginModal from '../components/LoginModal'
+import UserModal from '../components/UserModal'
+import ic_account from '../asset/iconImg/ic_account.svg'
+import ic_notification from '../asset/iconImg/ic_notification.svg'
+import ic_chat from '../asset/iconImg/ic_chat.svg'
+import logo_landscape from '../asset/iconImg/logo_landscape.svg'
 
-const Header = ({ children, user }) => {
+const Header = ({ children }) => {
   const userInfo = getUser()
   const navigate = useNavigate()
+  const [modalOpen, setModalOpen] = useState(false)
+  const [userModalOpen, setUserModalOpen] = useState(false)
+
+  // 로그인 모달창 노출
+  const showModal = () => {
+    setModalOpen(true)
+  }
+  // 모달 끄기 (X버튼 onClick 이벤트 핸들러)
+  const closeModal = () => {
+    setModalOpen(false)
+  }
+
+  // 유저 모달창 노출
+  const showUserModal = () => {
+    setUserModalOpen(true)
+  }
+  // 유저 모달창 끄기
+  const closeUserModal = () => {
+    setUserModalOpen(false)
+  }
+
+  
 
   const logoutHandler = () => {
     if (window.confirm('로그아웃 하시겠습니까?')) {
@@ -22,19 +50,19 @@ const Header = ({ children, user }) => {
     <HeaderContainer>
       <IndexHeader>
         <IndexLeft>
-          <Link to="/">
-            <LogoBox>
-              <img
+          <LogoBox>
+            <Link to="/">
+              <Img
                 alt="logo"
-                src="https://d2bovrvbszerbl.cloudfront.net/assets/logo/logo_landscape-01bd6c93380effd6467ebc566cd6b4b8afd436b716be616dbde484ab28828423.svg"
+                src={logo_landscape}
               />
-            </LogoBox>
-          </Link>
+            </Link>
+          </LogoBox>
           <TabDivider />
           <TabCenter>
             <TabButton>
               <MyLink to="/recruit">
-                <span>채용공고</span>
+                <span>채용 공고</span>
               </MyLink>
             </TabButton>
             <TabButton>
@@ -71,13 +99,24 @@ const Header = ({ children, user }) => {
         </IndexLeft>
         {userInfo ? (
           <IndexRight>
-            <Name> {userInfo.alg} 안녕하세요!</Name>
-            <Button onClick={logoutHandler}>Logout</Button>
+            <TabIcon onClick={showUserModal}>
+              <IconImage src={ic_account}></IconImage>
+              {userModalOpen && userInfo && logoutHandler && closeUserModal && <UserModal setUserModalOpen={setUserModalOpen} email={userInfo.sub} logoutHandler={logoutHandler} closeUserModal={closeUserModal} />}
+            </TabIcon>
+            <TabIcon>
+              <IconImage src={ic_notification}></IconImage>
+            </TabIcon>
+            <TabIcon onClick={logoutHandler}>
+              <IconImage src={ic_chat}></IconImage>
+            </TabIcon>
           </IndexRight>
         ) : (
           <IndexRight>
-            <LoginButton onClick={() => navigate('/login')}>회원가입/로그인</LoginButton>
-            <EnterpriseButton onClick={logoutHandler}>기업서비스</EnterpriseButton>
+            <LoginButton onClick={showModal}>회원가입/로그인</LoginButton>
+            {modalOpen && closeModal && <LoginModal setModalOpen={setModalOpen} closeModal={closeModal}/>}
+            <EnterpriseButton onClick={logoutHandler}>
+              기업서비스
+            </EnterpriseButton>
           </IndexRight>
         )}
       </IndexHeader>
@@ -96,7 +135,7 @@ const HeaderContainer = styled.div`
 `
 
 const IndexHeader = styled.div`
-  position: fixed; 
+  position: fixed;
   top: 0;
   width: 100%;
   height: 52px;
@@ -119,6 +158,9 @@ const IndexLeft = styled.div`
 const LogoBox = styled.div`
   margin-right: 16px;
 `
+const Img = styled.img`
+  vertical-align: middle;
+`
 const TabDivider = styled.div`
   width: 1px;
   height: 16px;
@@ -137,6 +179,14 @@ const TabButton = styled.div`
   margin: 0 12px;
   cursor: pointer;
   font-weight: 500;
+
+  &:first-child {
+    margin-left: 0px;
+  }
+
+  &:last-child {
+    margin-right: 0px;
+  }
 `
 const MyLink = styled(Link)`
   display: flex;
@@ -153,47 +203,57 @@ const IndexRight = styled.div`
   display: flex;
   align-items: center;
 `
+const TabIcon = styled.div`
+  width: 38px;
+  height: 38px;
+  margin-left: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background: #f0f0f0;
+  }
+`
+const IconImage = styled.img`
+  vertical-align: middle;
+  width: 24px;
+  height: 24px;
+`
+
 const LoginButton = styled.div`
-width: 105px;
-    height: 32px;
-    margin-right: 8px;
-    cursor: pointer;
-    white-space: nowrap;
-    background: #FFF6F0;
-    border-color: #FED2BA;
-    color: #FF6813;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    border: 1px solid #FED2BA;
-    border-radius: 4px;
-    font-weight: 400;
+  width: 105px;
+  height: 32px;
+  margin-right: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  background: #fff6f0;
+  border-color: #fed2ba;
+  color: #ff6813;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border: 1px solid #fed2ba;
+  border-radius: 4px;
+  font-weight: 400;
 `
 const EnterpriseButton = styled.div`
-padding: 6px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #777777;
-    text-decoration: none;
-    white-space: nowrap;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    border: 1px solid #EEEEEE;
-    border-radius: 4px;
-    background: #FFFFFF;
-    font-weight: 400;
-`
-const Button = styled.button`
-  color: black;
-  font-family: 'InkLipquid';
-  font-weight: bold;
-  font-size: 19px;
-`
-const Name = styled.b`
-  font-weight: bold;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777777;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border: 1px solid #eeeeee;
+  border-radius: 4px;
+  background: #ffffff;
+  font-weight: 400;
 `
